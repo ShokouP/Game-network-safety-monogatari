@@ -46,17 +46,23 @@ var last_flavor_month: int = 0
 var flavor_count_this_month: int = 0
 
 func _maybe_spawn_flavor_event() -> void:
-	## 每月随机 1-2 条彩蛋事件
+	## 每月随机 1-2 条彩蛋事件（第 1 年减半）
 	var current_month_abs: int = GameState.year * 12 + GameState.month
 	if current_month_abs != last_flavor_month:
 		last_flavor_month = current_month_abs
 		flavor_count_this_month = 0
-	if flavor_count_this_month >= 2:
+	var max_per_month := 2
+	if GameState.year == 1:
+		max_per_month = 1
+	if flavor_count_this_month >= max_per_month:
 		return
 	if GameState.day < 5:
-		return  # 月初缓一缓
-	# 每天 4% 概率触发
-	if GameState.rng.randf() > 0.04:
+		return
+	# 每天概率（第 1 年减半）
+	var chance := 0.04
+	if GameState.year == 1:
+		chance = 0.02
+	if GameState.rng.randf() > chance:
 		return
 	# 按权重选
 	var candidates: Array = []
@@ -128,14 +134,23 @@ func _skill_name(s: String) -> String:
 func _maybe_spawn_incident() -> void:
 	if EmployeeRoster.employees.is_empty():
 		return
+	# 新手保护：第 1 年攻击频率大幅降低
+	var protection_mult := 1.0
+	if GameState.year == 1:
+		protection_mult = 0.3  # 第 1 年只有 30% 频率
+	elif GameState.year == 2:
+		protection_mult = 0.7
 	var today_abs: int = GameState.year * 360 + GameState.month * 30 + GameState.day
 	if today_abs < next_incident_check_day:
 		return
 	var soc_level := GameState.get_dept("soc").level
 	var base_chance := 0.35
-	var chance: float = (base_chance + GameState.reputation * 0.004 - soc_level * 0.03) * GameState.difficulty_modifier
+	var chance: float = (base_chance + GameState.reputation * 0.004 - soc_level * 0.03) * GameState.difficulty_modifier * protection_mult
 	if GameState.rng.randf() < chance:
 		var type_id := GameData.pick_random_incident_type(GameState.rng, GameState.reputation)
 		var inc := GameData.make_incident(type_id, GameState.year, GameState.month, GameState.rng)
+		# 新手期事件难度也降低
+		if GameState.year == 1:
+			inc.difficulty = int(inc.difficulty * 0.7)
 		IncidentQueue.spawn(inc)
 	next_incident_check_day = today_abs + GameState.rng.randi_range(1, 2)

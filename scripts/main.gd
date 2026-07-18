@@ -100,9 +100,20 @@ func _ready() -> void:
 	if office_view:
 		office_view.refresh_all_employees()
 
-	# 首次启动新手教程（无存档且未看过教程）
-	if not SaveMgr.slot_exists(SaveMgr.AUTO_SLOT) and EmployeeRoster.employees.size() <= 2 and tutorial_overlay:
+	# 首次启动新手教程（未看过教程标记）
+	if tutorial_overlay and not _has_seen_tutorial():
 		call_deferred("_start_tutorial")
+
+const TUTORIAL_SEEN_PATH := "user://tutorial_seen.flag"
+
+func _has_seen_tutorial() -> bool:
+	return FileAccess.file_exists(TUTORIAL_SEEN_PATH)
+
+func _mark_tutorial_seen() -> void:
+	var f := FileAccess.open(TUTORIAL_SEEN_PATH, FileAccess.WRITE)
+	if f:
+		f.store_string("1")
+		f.close()
 
 func _refresh_all() -> void:
 	_on_funds_changed(GameState.funds)
@@ -920,7 +931,13 @@ func _on_help_button_pressed() -> void:
 
 func _start_tutorial() -> void:
 	if tutorial_overlay:
+		if not tutorial_overlay.tutorial_finished.is_connected(_on_tutorial_finished):
+			tutorial_overlay.tutorial_finished.connect(_on_tutorial_finished)
 		tutorial_overlay.start(self)
+
+func _on_tutorial_finished() -> void:
+	_mark_tutorial_seen()
+	_on_alert("教程完成！开始你的安全部长生涯", Color(0.5, 1.0, 0.7))
 
 # ---------- CEO 评价 + 预算谈判 ----------
 
