@@ -287,7 +287,8 @@ static func make_incident(type_id: String, year: int, month: int, rng: RandomNum
 	inc.fund_reward = 1000 + inc.difficulty * 50
 	inc.rep_reward = 1 + int(inc.difficulty / 20)
 	inc.exp_reward = 15 + int(inc.difficulty / 2)
-	inc.fund_penalty = 2000 + inc.difficulty * 80
+	# 失败惩罚降低 30%（新手友好）
+	inc.fund_penalty = int((2000 + inc.difficulty * 80) * 0.7)
 	inc.rep_penalty = 2 + int(inc.difficulty / 15)
 	# 严重事件 50% 概率标记为专班任务
 	if inc.severity >= Incident.Severity.HIGH and rng.randf() < 0.5:

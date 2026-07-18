@@ -1,0 +1,72 @@
+[gd_scene load_steps=2 format=3 uid="uid://tutorial_overlay"]
+
+[ext_resource type="Script" path="res://scripts/tutorial_overlay.gd" id="1"]
+
+[node name="TutorialOverlay" type="CanvasLayer"]
+layer = 100
+script = ExtResource("1")
+
+[node name="Dim" type="ColorRect" parent="."]
+unique_name_in_owner = true
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0, 0, 0, 0.4)
+
+[node name="Highlight" type="Panel" parent="."]
+unique_name_in_owner = true
+visible = false
+
+[node name="BubblePanel" type="PanelContainer" parent="."]
+unique_name_in_owner = true
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -280.0
+offset_top = 120.0
+offset_right = 280.0
+offset_bottom = 320.0
+grow_horizontal = 2
+
+[node name="VBox" type="VBoxContainer" parent="BubblePanel"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="StepLabel" type="Label" parent="BubblePanel/VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 11
+theme_override_colors/font_color = Color(0.6, 0.7, 0.8, 1)
+text = "步骤 1/9"
+
+[node name="TitleLabel" type="Label" parent="BubblePanel/VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+theme_override_colors/font_color = Color(1, 0.9, 0.5, 1)
+text = "👋 欢迎"
+
+[node name="ContentLabel" type="Label" parent="BubblePanel/VBox"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_font_sizes/font_size = 13
+text = "..."
+autowrap_mode = 2
+
+[node name="BtnRow" type="HBoxContainer" parent="BubblePanel/VBox"]
+layout_mode = 2
+theme_override_constants/separation = 8
+alignment = 2
+
+[node name="SkipButton" type="Button" parent="BubblePanel/VBox/BtnRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(80, 32)
+layout_mode = 2
+text = "跳过"
+
+[node name="NextButton" type="Button" parent="BubblePanel/VBox/BtnRow"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(120, 32)
+layout_mode = 2
+text = "下一条 →"

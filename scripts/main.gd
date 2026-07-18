@@ -33,6 +33,7 @@ const INCIDENT_ROW_SCENE := preload("res://scenes/incident_row.tscn")
 @onready var ceo_review_vbox: VBoxContainer = %CEOReviewVBox
 @onready var budget_dialog: AcceptDialog = %BudgetDialog
 @onready var budget_vbox: VBoxContainer = %BudgetVBox
+@onready var tutorial_overlay: CanvasLayer = %TutorialOverlay
 @onready var save_slot_dialog: AcceptDialog = %SaveSlotDialog
 @onready var save_slot_list: VBoxContainer = %SaveSlotList
 @onready var choice_dialog: AcceptDialog = %ChoiceDialog
@@ -99,6 +100,10 @@ func _ready() -> void:
 	if office_view:
 		office_view.refresh_all_employees()
 
+	# 首次启动新手教程（无存档且未看过教程）
+	if not SaveMgr.slot_exists(SaveMgr.AUTO_SLOT) and EmployeeRoster.employees.size() <= 2 and tutorial_overlay:
+		call_deferred("_start_tutorial")
+
 func _refresh_all() -> void:
 	_on_funds_changed(GameState.funds)
 	_on_rep_changed(GameState.reputation)
@@ -114,6 +119,30 @@ func _on_funds_changed(v: int) -> void:
 	funds_label.text = "💰 ¥%s" % _format_num(v)
 	funds_label.modulate = Color(1.0, 0.4, 0.4) if v < 5000 else Color(1.0, 0.95, 0.6)
 	_check_funds_achievements(v)
+	# 低资金且未用过贷款：在资金标签旁弹"紧急贷款"按钮
+	_update_emergency_loan_button(v)
+
+var emergency_loan_btn: Button = null
+
+func _update_emergency_loan_button(funds: int) -> void:
+	var should_show: bool = funds < GameState.BANKRUPT_THRESHOLD and not GameState.has_used_emergency_loan
+	if should_show and emergency_loan_btn == null:
+		emergency_loan_btn = Button.new()
+		emergency_loan_btn.text = "💼 紧急贷款"
+		emergency_loan_btn.modulate = Color(1.0, 0.85, 0.4)
+		emergency_loan_btn.tooltip_text = "CEO 特批 ¥%d（声誉 -%d），一次性" % [GameState.EMERGENCY_LOAN_AMOUNT, GameState.EMERGENCY_LOAN_REP_COST]
+		emergency_loan_btn.pressed.connect(_on_emergency_loan)
+		var top_hbox := funds_label.get_parent() as HBoxContainer
+		if top_hbox:
+			top_hbox.add_child(emergency_loan_btn)
+			top_hbox.move_child(emergency_loan_btn, funds_label.get_index() + 1)
+	elif not should_show and emergency_loan_btn != null:
+		emergency_loan_btn.queue_free()
+		emergency_loan_btn = null
+
+func _on_emergency_loan() -> void:
+	GameState.take_emergency_loan()
+	_update_emergency_loan_button(GameState.funds)
 
 func _on_rep_changed(v: int) -> void:
 	rep_label.text = "⭐ %d/100" % v
@@ -884,7 +913,14 @@ func _on_load_from_slot(slot: int) -> void:
 	save_slot_dialog.hide()
 
 func _on_help_button_pressed() -> void:
-	_on_alert("💡 招募员工 → 派单处置事件 → 赚钱升级部门 → 抵御更强攻击", Color(0.8, 0.9, 1.0))
+	if tutorial_overlay:
+		tutorial_overlay.start(self)
+	else:
+		_on_alert("💡 招募员工 → 派单处置事件 → 赚钱升级部门 → 抵御更强攻击", Color(0.8, 0.9, 1.0))
+
+func _start_tutorial() -> void:
+	if tutorial_overlay:
+		tutorial_overlay.start(self)
 
 # ---------- CEO 评价 + 预算谈判 ----------
 

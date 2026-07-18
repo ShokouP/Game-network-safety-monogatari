@@ -13,12 +13,18 @@ signal game_over(reason: String)
 signal alert_message(text: String, color: Color)
 signal year_ended(year: int)  # 用于年度奖项
 
-const START_FUNDS := 50000
+const START_FUNDS := 80000   # 原 50000 → 80000，给新手喘息
 const START_REP := 10
 const MAX_REP := 100
 const MIN_REP := 0
 const MAX_RP := 9999
 const MAX_INTEL := 100
+
+# 软性破产保护
+const BANKRUPT_THRESHOLD := 1000     # 资金低于此进入"危机"状态
+const BANKRUPT_GRACE_MONTHS := 2     # 连续 2 个月资金 < 阈值才破产
+const EMERGENCY_LOAN_AMOUNT := 30000 # CEO 紧急贷款额度
+const EMERGENCY_LOAN_REP_COST := 5   # 贷款声誉代价
 
 const DAY_SECONDS := [0.0, 2.0, 0.8, 0.3]
 
@@ -36,6 +42,10 @@ var departments: Dictionary = {}
 var is_game_over: bool = false
 var ng_plus_count: int = 0     # 二周目计数
 var difficulty_modifier: float = 1.0  # NG+ 提升
+
+# 破产保护状态
+var bankrupt_months_count: int = 0   # 连续低资金月数
+var has_used_emergency_loan: bool = false  # 是否已用过紧急贷款
 
 var rng := RandomNumberGenerator.new()
 
@@ -61,6 +71,8 @@ func reset_for_new_game() -> void:
 	threat_intel = 50
 	is_game_over = false
 	difficulty_modifier = 1.0 + ng_plus_count * 0.3
+	bankrupt_months_count = 0
+	has_used_emergency_loan = false
 	_init_departments()
 	date_changed.emit(year, month, day)
 	funds_changed.emit(funds)
@@ -73,8 +85,7 @@ func reset_for_new_game() -> void:
 func add_funds(amount: int) -> void:
 	funds = max(0, funds + amount)
 	funds_changed.emit(funds)
-	if funds <= 0 and not is_game_over:
-		_trigger_game_over("公司破产！资金链断裂，董事会被迫解散安全部门。")
+	# 软性破产：不再立即破产，由 _on_month_end 累计月份判定
 
 func can_afford(cost: int) -> bool:
 	return funds >= cost
@@ -144,8 +155,8 @@ func _on_month_end() -> void:
 	for dept in departments.values():
 		if dept.level > 0:
 			add_funds(-GameData.get_dept_upkeep(dept.id, dept.level))
-	# 合同收入
-	var contract_income := reputation * 300
+	# 合同收入（提高基数）
+	var contract_income := reputation * 500  # 300 → 500
 	add_funds(contract_income)
 	alert_message.emit("月度安全服务合同收入 ¥%d（声誉 %d）" % [contract_income, reputation], Color(0.5, 0.9, 1.0))
 	# 研究点被动产出（实验室 + combo）
@@ -153,6 +164,29 @@ func _on_month_end() -> void:
 	if lab.level > 0:
 		var rp_gain: int = int(lab.level * 5 * get_combo_lab_rp_mult()) + get_combo_monthly_rp_bonus()
 		add_rp(rp_gain)
+	# 软性破产判定：连续 N 个月资金低于阈值
+	if funds < BANKRUPT_THRESHOLD:
+		bankrupt_months_count += 1
+		if bankrupt_months_count >= BANKRUPT_GRACE_MONTHS:
+			_trigger_game_over("连续 %d 个月资金枯竭，公司被迫解散安全部门。" % BANKRUPT_GRACE_MONTHS)
+		else:
+			alert_message.emit("⚠️ 资金危机！连续 %d/%d 个月低资金，再 %d 个月将破产" % [
+				bankrupt_months_count, BANKRUPT_GRACE_MONTHS, BANKRUPT_GRACE_MONTHS - bankrupt_months_count
+			], Color(1.0, 0.5, 0.5))
+	else:
+		bankrupt_months_count = 0
+
+func take_emergency_loan() -> bool:
+	## CEO 紧急贷款（一次性）
+	if has_used_emergency_loan:
+		alert_message.emit("紧急贷款已用过", Color(1.0, 0.7, 0.4))
+		return false
+	has_used_emergency_loan = true
+	funds += EMERGENCY_LOAN_AMOUNT
+	add_rep(-EMERGENCY_LOAN_REP_COST)
+	funds_changed.emit(funds)
+	alert_message.emit("💼 CEO 批了 ¥%d 紧急贷款（声誉 -%d）" % [EMERGENCY_LOAN_AMOUNT, EMERGENCY_LOAN_REP_COST], Color(0.5, 1.0, 0.7))
+	return true
 
 # ---------- 部门 ----------
 
@@ -254,6 +288,8 @@ func to_dict() -> Dictionary:
 		"research_points": research_points, "threat_intel": threat_intel,
 		"ng_plus_count": ng_plus_count,
 		"difficulty_modifier": difficulty_modifier,
+		"bankrupt_months_count": bankrupt_months_count,
+		"has_used_emergency_loan": has_used_emergency_loan,
 		"departments": departments.values().map(func(d): return d.to_dict()),
 	}
 
@@ -268,6 +304,8 @@ func from_dict(d: Dictionary) -> void:
 	threat_intel = d.get("threat_intel", 50)
 	ng_plus_count = d.get("ng_plus_count", 0)
 	difficulty_modifier = d.get("difficulty_modifier", 1.0)
+	bankrupt_months_count = d.get("bankrupt_months_count", 0)
+	has_used_emergency_loan = d.get("has_used_emergency_loan", false)
 	departments.clear()
 	for dd in d.get("departments", []):
 		var dept := Department.from_dict(dd)
