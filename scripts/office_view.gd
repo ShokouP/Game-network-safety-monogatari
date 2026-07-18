@@ -9,9 +9,9 @@ const FLOOR_WIDTH := 20
 const FLOOR_HEIGHT := 12
 
 const FLOORS := {
-	0: {"name": "F1 办公区", "unlocked_by": null, "depts": [], "floor_tex": "floor_f1"},
-	1: {"name": "F2 运营区", "unlocked_by": "soc", "depts": ["soc", "training_room", "lounge"], "floor_tex": "floor_f2"},
-	2: {"name": "F3 研究区", "unlocked_by": "lab", "depts": ["lab", "forensics", "pr_office"], "floor_tex": "floor_f3"},
+	0: {"name": "F1 办公区", "unlocked_by": null, "depts": [], "floor_tex": "map_f1_office"},
+	1: {"name": "F2 运营区", "unlocked_by": "soc", "depts": ["soc", "training_room", "lounge"], "floor_tex": "map_f2_operations"},
+	2: {"name": "F3 研究区", "unlocked_by": "lab", "depts": ["lab", "forensics", "pr_office"], "floor_tex": "map_f3_research"},
 }
 
 @onready var floor_container: Node2D = %FloorContainer
@@ -61,20 +61,23 @@ func _build_floor(floor_id: int) -> void:
 	var floor_node := Node2D.new()
 	floor_node.name = "Floor%d" % floor_id
 	floor_container.add_child(floor_node)
-	# 用 AI 生成的 tile 铺满
+	# 用 AI 生成的 2.5D 地图作为背景
 	var tex_key: String = FLOORS[floor_id]["floor_tex"]
-	var tex_path := "res://assets/tiles/%s_32.png" % tex_key
+	var tex_path := "res://assets/tiles/maps/%s.jpg" % tex_key
 	if ResourceLoader.exists(tex_path):
 		var tex: Texture2D = load(tex_path)
-		for x in range(FLOOR_WIDTH):
-			for y in range(FLOOR_HEIGHT):
-				var spr := Sprite2D.new()
-				spr.texture = tex
-				spr.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
-				spr.centered = false
-				spr.position = Vector2(x * TILE_SIZE, y * TILE_SIZE)
-				floor_node.add_child(spr)
+		var spr := Sprite2D.new()
+		spr.texture = tex
+		spr.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+		spr.centered = false
+		# 缩放到楼层大小（20x12 格 = 640x384）
+		spr.scale = Vector2(
+			float(FLOOR_WIDTH * TILE_SIZE) / tex.get_width(),
+			float(FLOOR_HEIGHT * TILE_SIZE) / tex.get_height()
+		)
+		floor_node.add_child(spr)
 	else:
+		# 回退到 tile 平铺
 		var bg := ColorRect.new()
 		bg.size = Vector2(FLOOR_WIDTH * TILE_SIZE, FLOOR_HEIGHT * TILE_SIZE)
 		match floor_id:
@@ -82,19 +85,6 @@ func _build_floor(floor_id: int) -> void:
 			1: bg.color = Color(0.14, 0.22, 0.20)
 			2: bg.color = Color(0.20, 0.16, 0.28)
 		floor_node.add_child(bg)
-	# 网格线
-	for x in range(FLOOR_WIDTH + 1):
-		var line := ColorRect.new()
-		line.size = Vector2(1, FLOOR_HEIGHT * TILE_SIZE)
-		line.position = Vector2(x * TILE_SIZE, 0)
-		line.color = Color(0, 0, 0, 0.08)
-		floor_node.add_child(line)
-	for y in range(FLOOR_HEIGHT + 1):
-		var line := ColorRect.new()
-		line.size = Vector2(FLOOR_WIDTH * TILE_SIZE, 1)
-		line.position = Vector2(0, y * TILE_SIZE)
-		line.color = Color(0, 0, 0, 0.08)
-		floor_node.add_child(line)
 	if floor_id == 0:
 		_build_desks(floor_node)
 	else:
