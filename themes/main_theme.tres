@@ -116,19 +116,19 @@ border_width_bottom = 2
 border_color = Color(0.40, 0.80, 1.0, 1)
 corner_radius_top_left = 4
 corner_radius_top_right = 4
-content_margin_left = 14.0
-content_margin_top = 6.0
-content_margin_right = 14.0
-content_margin_bottom = 6.0
+content_margin_left = 18.0
+content_margin_top = 8.0
+content_margin_right = 18.0
+content_margin_bottom = 8.0
 
 [sub_resource type="StyleBoxFlat" id="tab_unselected"]
 bg_color = Color(0.14, 0.17, 0.23, 1)
 corner_radius_top_left = 4
 corner_radius_top_right = 4
-content_margin_left = 14.0
-content_margin_top = 6.0
-content_margin_right = 14.0
-content_margin_bottom = 6.0
+content_margin_left = 18.0
+content_margin_top = 8.0
+content_margin_right = 18.0
+content_margin_bottom = 8.0
 
 [sub_resource type="StyleBoxFlat" id="scroll_bg"]
 bg_color = Color(0.10, 0.12, 0.16, 0.3)
