@@ -3,16 +3,16 @@
 [ext_resource type="Script" path="res://scripts/incident_row.gd" id="1"]
 
 [node name="IncidentRow" type="PanelContainer"]
-custom_minimum_size = Vector2(0, 100)
+custom_minimum_size = Vector2(0, 110)
 script = ExtResource("1")
 
 [node name="HBox" type="HBoxContainer" parent="."]
 layout_mode = 2
-theme_override_constants/separation = 10
+theme_override_constants/separation = 12
 
 [node name="IconRect" type="TextureRect" parent="HBox"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(48, 48)
+custom_minimum_size = Vector2(56, 56)
 layout_mode = 2
 size_flags_vertical = 4
 texture_filter = 1

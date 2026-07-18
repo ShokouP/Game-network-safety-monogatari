@@ -112,7 +112,7 @@ size_flags_vertical = 3
 theme_override_constants/separation = 10
 
 [node name="LeftPanel" type="PanelContainer" parent="RootMargin/RootVBox/MainHBox"]
-custom_minimum_size = Vector2(340, 0)
+custom_minimum_size = Vector2(400, 0)
 layout_mode = 2
 size_flags_vertical = 3
 
@@ -158,9 +158,12 @@ size_flags_vertical = 3
 layout_mode = 2
 metadata/_tab_name = "办公室"
 
-[node name="OfficeView" parent="RootMargin/RootVBox/MainHBox/CenterVBox/CenterTabs/OfficeTab" instance=ExtResource("3")]
+[node name="OfficeScroll" type="ScrollContainer" parent="RootMargin/RootVBox/MainHBox/CenterVBox/CenterTabs/OfficeTab"]
+layout_mode = 2
+
+[node name="OfficeView" parent="RootMargin/RootVBox/MainHBox/CenterVBox/CenterTabs/OfficeTab/OfficeScroll" instance=ExtResource("3")]
 unique_name_in_owner = true
-position = Vector2(0, 40)
+position = Vector2(10, 30)
 
 [node name="IncidentTab" type="PanelContainer" parent="RootMargin/RootVBox/MainHBox/CenterVBox/CenterTabs"]
 layout_mode = 2
@@ -211,7 +214,7 @@ theme_override_constants/h_separation = 10
 theme_override_constants/v_separation = 10
 
 [node name="RightPanel" type="PanelContainer" parent="RootMargin/RootVBox/MainHBox"]
-custom_minimum_size = Vector2(260, 0)
+custom_minimum_size = Vector2(300, 0)
 layout_mode = 2
 size_flags_vertical = 3
 
