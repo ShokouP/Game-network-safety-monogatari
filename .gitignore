@@ -14,3 +14,4 @@ Thumbs.db
 
 # 截图与临时
 screenshots/
+tools/__pycache__/
