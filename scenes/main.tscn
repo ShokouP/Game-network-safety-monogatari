@@ -32,7 +32,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 theme_override_constants/separation = 0
 
-# ========== 顶栏 ==========
+; ========== 顶栏 ==========
 [node name="TopBar" type="PanelContainer" parent="RootVBox"]
 custom_minimum_size = Vector2(0, 52)
 layout_mode = 2
@@ -121,18 +121,18 @@ custom_minimum_size = Vector2(50, 36)
 layout_mode = 2
 text = "❓"
 
-# ========== 新闻 Ticker ==========
+; ========== 新闻 Ticker ==========
 [node name="NewsTicker" parent="RootVBox" instance=ExtResource("4")]
 custom_minimum_size = Vector2(0, 28)
 layout_mode = 2
 
-# ========== 中央三栏 ==========
+; ========== 中央三栏 ==========
 [node name="MainHBox" type="HBoxContainer" parent="RootVBox"]
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_constants/separation = 0
 
-# 左侧 - 员工面板
+; 左侧 - 员工面板
 [node name="LeftPanel" type="PanelContainer" parent="RootVBox/MainHBox"]
 custom_minimum_size = Vector2(400, 0)
 layout_mode = 2
@@ -175,7 +175,7 @@ layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/separation = 6
 
-# 中央 - 办公室 + 事件 + 部门
+; 中央 - 办公室 + 事件 + 部门
 [node name="CenterVBox" type="VBoxContainer" parent="RootVBox/MainHBox"]
 layout_mode = 2
 size_flags_horizontal = 3
@@ -277,7 +277,7 @@ columns = 6
 theme_override_constants/h_separation = 8
 theme_override_constants/v_separation = 8
 
-# 右侧 - 日志 + 排行
+; 右侧 - 日志 + 排行
 [node name="RightPanel" type="PanelContainer" parent="RootVBox/MainHBox"]
 custom_minimum_size = Vector2(340, 0)
 layout_mode = 2
@@ -328,7 +328,7 @@ layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/separation = 2
 
-# ========== 底部状态栏 ==========
+; ========== 底部状态栏 ==========
 [node name="BottomBar" type="PanelContainer" parent="RootVBox"]
 custom_minimum_size = Vector2(0, 36)
 layout_mode = 2
@@ -359,7 +359,7 @@ theme_override_colors/font_color = Color(0.5, 0.55, 0.65, 1)
 text = "v1.2 安全部物语"
 vertical_alignment = 1
 
-# ========== Toast 容器 ==========
+; ========== Toast 容器 ==========
 [node name="AchievementToastContainer" type="VBoxContainer" parent="."]
 unique_name_in_owner = true
 layout_mode = 1
@@ -376,7 +376,7 @@ grow_horizontal = 0
 grow_vertical = 0
 theme_override_constants/separation = 6
 
-# ========== 对话框 ==========
+; ========== 对话框 ==========
 [node name="HireDialog" type="AcceptDialog" parent="."]
 unique_name_in_owner = true
 title = "招聘新员工"
@@ -595,7 +595,7 @@ layout_mode = 2
 [node name="TutorialOverlay" parent="." instance=ExtResource("5")]
 unique_name_in_owner = true
 
-# ========== 信号连接 ==========
+; ========== 信号连接 ==========
 [connection signal="pressed" from="RootVBox/TopBar/TopMargin/TopHBox/AchievementButton" to="." method="_on_achievement_button_pressed"]
 [connection signal="pressed" from="RootVBox/TopBar/TopMargin/TopHBox/SaveButton" to="." method="_on_save_button_pressed"]
 [connection signal="pressed" from="RootVBox/TopBar/TopMargin/TopHBox/HelpButton" to="." method="_on_help_button_pressed"]

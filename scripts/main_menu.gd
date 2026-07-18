@@ -24,6 +24,10 @@ extends Control
 var selected_avatar_id: int = 0
 const AVATAR_KEYS := ["general", "phishing", "malware", "network", "forensics", "compliance"]
 
+func _input(event: InputEvent) -> void:
+	if event is InputEventMouseButton and event.pressed:
+		print("[MainMenu] _input: button=%d, pos=%s" % [event.button_index, event.position])
+
 func _ready() -> void:
 	# 加载背景
 	if ResourceLoader.exists("res://assets/illustrations/menu_bg.jpg"):
@@ -42,6 +46,12 @@ func _ready() -> void:
 	save_list_panel.visible = false
 	# 调试：检查 start_btn 是否成功连接
 	print("[MainMenu] start_btn=%s, connected=%s" % [start_btn, start_btn.pressed.is_connected(_on_start_game)])
+	# 调试：给 start_btn 加 gui_input 监听
+	start_btn.gui_input.connect(_on_start_btn_gui_input)
+
+func _on_start_btn_gui_input(event: InputEvent) -> void:
+	if event is InputEventMouseButton and event.pressed:
+		print("[MainMenu] StartButton gui_input: button=%d, pressed=%s" % [event.button_index, event.pressed])
 
 func _build_avatar_grid() -> void:
 	for c in avatar_grid.get_children():
@@ -93,8 +103,10 @@ func _on_avatar_selected(id: int, container: PanelContainer) -> void:
 		_highlight_avatar(c, c == container)
 
 func _on_new_game() -> void:
+	print("[MainMenu] _on_new_game called")
 	ceo_create_panel.visible = true
 	save_list_panel.visible = false
+	print("[MainMenu] ceo_create_panel.visible=%s" % ceo_create_panel.visible)
 
 func _on_load_game() -> void:
 	_build_save_list()
