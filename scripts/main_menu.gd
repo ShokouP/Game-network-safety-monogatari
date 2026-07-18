@@ -46,23 +46,49 @@ func _build_avatar_grid() -> void:
 		c.queue_free()
 	for i in range(AVATAR_KEYS.size()):
 		var key: String = AVATAR_KEYS[i]
-		var btn := Button.new()
-		btn.custom_minimum_size = Vector2(72, 72)
+		# 容器：TextureRect 显示头像，Button 透明覆盖处理点击
+		var container := PanelContainer.new()
+		container.custom_minimum_size = Vector2(72, 72)
+		var tex := TextureRect.new()
+		tex.expand_mode = TextureRect.EXPAND_FIT_WIDTH_PROPORTIONAL
+		tex.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		tex.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 		var tex_path := "res://assets/sprites/employees/%s_64_transparent.png" % key
 		if ResourceLoader.exists(tex_path):
-			btn.icon = load(tex_path)
+			tex.texture = load(tex_path)
+		container.add_child(tex)
+		var btn := Button.new()
+		btn.flat = true
+		btn.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 		btn.toggle_mode = true
-		btn.pressed.connect(_on_avatar_selected.bind(i, btn))
-		avatar_grid.add_child(btn)
+		btn.pressed.connect(_on_avatar_selected.bind(i, container))
+		container.add_child(btn)
+		container.set_meta("avatar_id", i)
+		avatar_grid.add_child(container)
 		if i == 0:
 			btn.button_pressed = true
+			_highlight_avatar(container, true)
 
-func _on_avatar_selected(id: int, btn: Button) -> void:
+func _highlight_avatar(container: PanelContainer, selected: bool) -> void:
+	var style := StyleBoxFlat.new()
+	if selected:
+		style.bg_color = Color(0.3, 0.6, 0.9, 0.4)
+		style.border_color = Color(0.5, 0.85, 1.0)
+		style.set_border_width_all(3)
+	else:
+		style.bg_color = Color(0.2, 0.25, 0.32, 0.5)
+		style.border_color = Color(0.3, 0.35, 0.45)
+		style.set_border_width_all(1)
+	style.corner_radius_top_left = 6
+	style.corner_radius_top_right = 6
+	style.corner_radius_bottom_right = 6
+	style.corner_radius_bottom_left = 6
+	container.add_theme_stylebox_override("panel", style)
+
+func _on_avatar_selected(id: int, container: PanelContainer) -> void:
 	selected_avatar_id = id
 	for c in avatar_grid.get_children():
-		if c is Button and c != btn:
-			c.button_pressed = false
-	btn.button_pressed = true
+		_highlight_avatar(c, c == container)
 
 func _on_new_game() -> void:
 	ceo_create_panel.visible = true
