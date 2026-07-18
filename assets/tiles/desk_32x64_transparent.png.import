@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cnrext10e13aq"
-path="res://.godot/imported/training_room.jpg-a4d72d8ded58ae46c17e723856f81960.ctex"
+uid="uid://cxeswgggccyx8"
+path="res://.godot/imported/desk_32x64_transparent.png-065ab48118aaf12b465e70973a1e1b78.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/sprites/facilities/training_room.jpg"
-dest_files=["res://.godot/imported/training_room.jpg-a4d72d8ded58ae46c17e723856f81960.ctex"]
+source_file="res://assets/tiles/desk_32x64_transparent.png"
+dest_files=["res://.godot/imported/desk_32x64_transparent.png-065ab48118aaf12b465e70973a1e1b78.ctex"]
 
 [params]
 

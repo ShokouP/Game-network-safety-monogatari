@@ -160,6 +160,7 @@ theme_override_constants/separation = 10
 [node name="CenterTabs" type="TabContainer" parent="RootMargin/RootVBox/MainHBox/CenterVBox"]
 layout_mode = 2
 size_flags_vertical = 3
+size_flags_stretch_ratio = 3.0
 
 [node name="OfficeTab" type="Control" parent="RootMargin/RootVBox/MainHBox/CenterVBox/CenterTabs"]
 layout_mode = 2
@@ -207,6 +208,8 @@ theme_override_constants/separation = 4
 
 [node name="DeptPanel" type="PanelContainer" parent="RootMargin/RootVBox/MainHBox/CenterVBox"]
 layout_mode = 2
+size_flags_vertical = 3
+size_flags_stretch_ratio = 1.0
 
 [node name="DeptVBox" type="VBoxContainer" parent="RootMargin/RootVBox/MainHBox/CenterVBox/DeptPanel"]
 layout_mode = 2
