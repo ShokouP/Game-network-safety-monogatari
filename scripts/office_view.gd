@@ -16,8 +16,6 @@ const FLOORS := {
 
 @onready var floor_container: Node2D = %FloorContainer
 @onready var employee_container: Node2D = %EmployeeContainer
-@onready var floor_tab: HBoxContainer = %FloorTab
-@onready var floor_label: Label = %FloorLabel
 @onready var camera: Camera2D = $Camera
 
 var current_floor: int = 0
@@ -97,12 +95,11 @@ func _build_floor(floor_id: int) -> void:
 		_build_desks(floor_node)
 	else:
 		_build_facilities(floor_node, floor_id)
-	floor_label.text = FLOORS[floor_id]["name"]
 
 func _build_desks(parent: Node2D) -> void:
 	var desk_tex: Texture2D = null
-	if ResourceLoader.exists("res://assets/tiles/desk_32x64.png"):
-		desk_tex = load("res://assets/tiles/desk_32x64.png")
+	if ResourceLoader.exists("res://assets/tiles/desk_32x64_transparent.png"):
+		desk_tex = load("res://assets/tiles/desk_32x64_transparent.png")
 	for row in range(3):
 		for col in range(4):
 			var x: int = 3 + col * 4
@@ -199,7 +196,11 @@ func _add_soc_scanline(panel: Panel, rect: Rect2i) -> void:
 	tween.tween_property(scan, "position:y", 10, 0.0)
 
 func _refresh_floor_tabs() -> void:
-	for c in floor_tab.get_children():
+	# 优先用外层 TabContainer 旁的 FloorTabBar（如果存在）
+	var tab_bar := _get_floor_tab_bar()
+	if tab_bar == null:
+		return
+	for c in tab_bar.get_children():
 		c.queue_free()
 	for floor_id in FLOORS.keys():
 		var b := Button.new()
@@ -211,9 +212,16 @@ func _refresh_floor_tabs() -> void:
 			b.text += " 🔒"
 			b.tooltip_text = "需要建设「%s」" % GameData.DEPARTMENTS[required_dept]["name"]
 		b.pressed.connect(_on_floor_tab.bind(floor_id))
-		floor_tab.add_child(b)
+		tab_bar.add_child(b)
 		if floor_id == current_floor:
 			b.modulate = Color(0.6, 1.0, 0.7)
+
+func _get_floor_tab_bar() -> HBoxContainer:
+	## 从外层 main 场景拿 FloorTabBar 节点
+	var main := get_tree().root.get_node_or_null("Main")
+	if main == null:
+		return null
+	return main.get_node_or_null("RootMargin/RootVBox/MainHBox/CenterVBox/CenterTabs/OfficeTab/OfficeVBox/FloorTabBar") as HBoxContainer
 
 func _is_floor_unlocked(floor_id: int) -> bool:
 	var required = FLOORS[floor_id]["unlocked_by"]

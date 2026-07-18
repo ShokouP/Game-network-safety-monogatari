@@ -161,9 +161,12 @@ func _get_dept_floor(dept_id: String) -> int:
 func _refresh_visual() -> void:
 	if not is_node_ready():
 		return
-	# 优先显示状态气泡
+	# 优先显示状态气泡（培训/疲劳）
 	if emp.is_training:
 		bubble_label.text = "📚 %d天" % emp.training_days_left
+		bubble.visible = true
+	elif emp.fatigue >= 80:
+		bubble_label.text = "😫"
 		bubble.visible = true
 	elif dialog_timer >= dialog_cooldown:
 		# 冷却结束，冒一句对话
@@ -175,14 +178,10 @@ func _refresh_visual() -> void:
 			bubble.visible = true
 			# 3 秒后隐藏
 			await get_tree().create_timer(3.0).timeout
-			if is_instance_valid(self) and not emp.is_training:
+			if is_instance_valid(self) and not emp.is_training and emp.fatigue < 80:
 				bubble.visible = false
-	elif not bubble.visible and emp.fatigue >= 80:
-		bubble_label.text = "😫"
-		bubble.visible = true
-	elif not bubble.visible and current_state == State.WORK_AT_DESK:
-		bubble_label.text = "💻"
-		bubble.visible = true
+	else:
+		bubble.visible = false
 	var has_incident := false
 	for inc in IncidentQueue.active_incidents:
 		if inc.assigned_employee_id == emp.id and inc.severity >= Incident.Severity.HIGH:

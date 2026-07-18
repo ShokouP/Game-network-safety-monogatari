@@ -165,9 +165,22 @@ size_flags_vertical = 3
 layout_mode = 2
 metadata/_tab_name = "办公室"
 
-[node name="OfficeView" parent="RootMargin/RootVBox/MainHBox/CenterVBox/CenterTabs/OfficeTab" instance=ExtResource("3")]
+[node name="OfficeVBox" type="VBoxContainer" parent="RootMargin/RootVBox/MainHBox/CenterVBox/CenterTabs/OfficeTab"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="FloorTabBar" type="HBoxContainer" parent="RootMargin/RootVBox/MainHBox/CenterVBox/CenterTabs/OfficeTab/OfficeVBox"]
 unique_name_in_owner = true
-position = Vector2(10, 30)
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="OfficeViewContainer" type="Control" parent="RootMargin/RootVBox/MainHBox/CenterVBox/CenterTabs/OfficeTab/OfficeVBox"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="OfficeView" parent="RootMargin/RootVBox/MainHBox/CenterVBox/CenterTabs/OfficeTab/OfficeVBox/OfficeViewContainer" instance=ExtResource("3")]
+unique_name_in_owner = true
+position = Vector2(10, 10)
 
 [node name="IncidentTab" type="PanelContainer" parent="RootMargin/RootVBox/MainHBox/CenterVBox/CenterTabs"]
 layout_mode = 2
