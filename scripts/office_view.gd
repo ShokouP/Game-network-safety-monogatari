@@ -29,6 +29,30 @@ func _ready() -> void:
 	GameState.dept_upgraded.connect(_on_dept_upgraded)
 	EmployeeRoster.employee_hired.connect(_on_employee_hired)
 	EmployeeRoster.employee_fired.connect(_on_employee_fired)
+	# 自动缩放适配父容器
+	call_deferred("_fit_to_parent")
+	get_viewport().size_changed.connect(_fit_to_parent)
+
+func _fit_to_parent() -> void:
+	## 让楼层缩放填满父容器（OfficeViewContainer）
+	var parent := get_parent()
+	if parent == null or not (parent is Control):
+		return
+	var container := parent as Control
+	var avail := container.size
+	if avail.x <= 0 or avail.y <= 0:
+		return
+	var floor_w := float(FLOOR_WIDTH * TILE_SIZE)
+	var floor_h := float(FLOOR_HEIGHT * TILE_SIZE)
+	var scale_x := avail.x / floor_w
+	var scale_y := avail.y / floor_h
+	var scale := minf(scale_x, scale_y)
+	scale = clampf(scale, 0.5, 3.0)  # 限制缩放范围
+	self.scale = Vector2(scale, scale)
+	# 居中
+	var offset_x := (avail.x - floor_w * scale) / 2.0
+	var offset_y := (avail.y - floor_h * scale) / 2.0
+	self.position = Vector2(offset_x, offset_y)
 
 func _build_floor(floor_id: int) -> void:
 	for c in floor_container.get_children():
