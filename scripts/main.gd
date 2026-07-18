@@ -942,6 +942,8 @@ func _on_tutorial_finished() -> void:
 # ---------- CEO 评价 + 预算谈判 ----------
 
 func _on_ceo_review(review: Dictionary) -> void:
+	if review.is_empty():
+		return
 	for c in ceo_review_vbox.get_children():
 		c.queue_free()
 	var title := Label.new()
@@ -976,6 +978,8 @@ func _on_ceo_review(review: Dictionary) -> void:
 	ceo_review_dialog.popup_centered()
 
 func _on_budget_offer(offer: Dictionary) -> void:
+	if offer.is_empty() or not offer.has("options"):
+		return
 	for c in budget_vbox.get_children():
 		c.queue_free()
 	var title := Label.new()

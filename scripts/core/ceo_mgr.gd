@@ -13,15 +13,37 @@ func _ready() -> void:
 func _on_date_changed(y: int, m: int, _d: int) -> void:
 	var quarter: int = (m - 1) / 3  # 0-3
 	var quarter_abs: int = y * 4 + quarter
-	# 每季度第 1 天触发
+	# 每季度第 1 天触发（延迟到下一帧，避免与其他 date_changed 回调冲突）
 	if _d == 1 and quarter_abs != last_review_quarter:
 		last_review_quarter = quarter_abs
-		var review := evaluate_quarter()
-		ceo_review_started.emit(review)
-		# 预算谈判（仅好评时）
-		if review["grade"] >= 2:  # B 级以上
-			var offer := generate_budget_offer(review)
-			budget_negotiation_started.emit(offer)
+		call_deferred("_do_quarter_review")
+
+func _do_quarter_review() -> void:
+	# 如果新手教程正在进行，等教程结束再弹
+	await _wait_for_tutorial()
+	var review := evaluate_quarter()
+	ceo_review_started.emit(review)
+	# 预算谈判（仅好评时）
+	if review["grade"] >= 2:
+		var offer := generate_budget_offer(review)
+		budget_negotiation_started.emit(offer)
+
+func _wait_for_tutorial() -> void:
+	## 等教程结束（最多 60 秒）
+	var main := get_tree().root.get_node_or_null("Main")
+	if main == null:
+		return
+	var overlay = main.get_node_or_null("TutorialOverlay")
+	if overlay == null:
+		return
+	var max_wait := 60.0
+	var waited := 0.0
+	while waited < max_wait:
+		var is_active: bool = overlay.get("is_active") if overlay.get("is_active") != null else false
+		if not is_active:
+			return
+		await get_tree().create_timer(2.0).timeout
+		waited += 2.0
 
 func evaluate_quarter() -> Dictionary:
 	## 评估季度表现
