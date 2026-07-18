@@ -9,7 +9,7 @@ def _load_key() -> str:
         return key
     env_file = Path.home() / ".config" / "cybercairo" / ".env.volc"
     if env_file.exists():
-        for line in env_file.read_text().splitlines():
+        for line in env_file.read_text(encoding="utf-8").splitlines():
             if line.startswith("VOLC_API_KEY="):
                 return line.split("=", 1)[1].strip()
     raise RuntimeError("no api key")
