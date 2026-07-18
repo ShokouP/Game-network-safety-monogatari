@@ -23,255 +23,343 @@ layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-color = Color(0.10, 0.13, 0.18, 1)
+color = Color(0.09, 0.12, 0.17, 1)
 
-[node name="RootMargin" type="MarginContainer" parent="."]
+[node name="RootVBox" type="VBoxContainer" parent="."]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+theme_override_constants/separation = 0
+
+# ========== 顶栏 ==========
+[node name="TopBar" type="PanelContainer" parent="RootVBox"]
+custom_minimum_size = Vector2(0, 52)
+layout_mode = 2
+
+[node name="TopMargin" type="MarginContainer" parent="RootVBox/TopBar"]
+layout_mode = 2
 theme_override_constants/margin_left = 16
-theme_override_constants/margin_top = 14
+theme_override_constants/margin_top = 4
 theme_override_constants/margin_right = 16
-theme_override_constants/margin_bottom = 14
+theme_override_constants/margin_bottom = 4
 
-[node name="RootVBox" type="VBoxContainer" parent="RootMargin"]
-layout_mode = 2
-theme_override_constants/separation = 10
-
-[node name="TopBar" type="PanelContainer" parent="RootMargin/RootVBox"]
-layout_mode = 2
-
-[node name="TopHBox" type="HBoxContainer" parent="RootMargin/RootVBox/TopBar"]
+[node name="TopHBox" type="HBoxContainer" parent="RootVBox/TopBar/TopMargin"]
 layout_mode = 2
 theme_override_constants/separation = 20
 
-[node name="LogoRect" type="TextureRect" parent="RootMargin/RootVBox/TopBar/TopHBox"]
-custom_minimum_size = Vector2(36, 36)
+[node name="LogoRect" type="TextureRect" parent="RootVBox/TopBar/TopMargin/TopHBox"]
+custom_minimum_size = Vector2(40, 40)
 layout_mode = 2
 texture_filter = 1
 expand_mode = 1
 stretch_mode = 5
 
-[node name="CEOLabel" type="Label" parent="RootMargin/RootVBox/TopBar/TopHBox"]
+[node name="CEOLabel" type="Label" parent="RootVBox/TopBar/TopMargin/TopHBox"]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 0.9, 0.6, 1)
+theme_override_font_sizes/font_size = 15
 text = "👔 安全部长 @ 安创科技"
 vertical_alignment = 1
 
-[node name="FundsLabel" type="Label" parent="RootMargin/RootVBox/TopBar/TopHBox"]
+[node name="Sep1" type="VSeparator" parent="RootVBox/TopBar/TopMargin/TopHBox"]
+layout_mode = 2
+
+[node name="FundsLabel" type="Label" parent="RootVBox/TopBar/TopMargin/TopHBox"]
 unique_name_in_owner = true
 layout_mode = 2
-text = "💰 ¥50000"
+theme_override_font_sizes/font_size = 16
+text = "💰 ¥80000"
 vertical_alignment = 1
 
-[node name="RepLabel" type="Label" parent="RootMargin/RootVBox/TopBar/TopHBox"]
+[node name="RepLabel" type="Label" parent="RootVBox/TopBar/TopMargin/TopHBox"]
 unique_name_in_owner = true
 layout_mode = 2
+theme_override_font_sizes/font_size = 16
 text = "⭐ 10/100"
 vertical_alignment = 1
 
-[node name="RpLabel" type="Label" parent="RootMargin/RootVBox/TopBar/TopHBox"]
+[node name="RpLabel" type="Label" parent="RootVBox/TopBar/TopMargin/TopHBox"]
 unique_name_in_owner = true
 layout_mode = 2
+theme_override_font_sizes/font_size = 16
 text = "🔬 0 RP"
 vertical_alignment = 1
 
-[node name="DateLabel" type="Label" parent="RootMargin/RootVBox/TopBar/TopHBox"]
+[node name="Sep2" type="VSeparator" parent="RootVBox/TopBar/TopMargin/TopHBox"]
+layout_mode = 2
+
+[node name="DateLabel" type="Label" parent="RootVBox/TopBar/TopMargin/TopHBox"]
 unique_name_in_owner = true
 layout_mode = 2
+theme_override_font_sizes/font_size = 15
 text = "📅 第1年 04月 01日"
 vertical_alignment = 1
 
-[node name="Spacer" type="Control" parent="RootMargin/RootVBox/TopBar/TopHBox"]
+[node name="Spacer" type="Control" parent="RootVBox/TopBar/TopMargin/TopHBox"]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="AchievementButton" type="Button" parent="RootMargin/RootVBox/TopBar/TopHBox"]
+[node name="AchievementButton" type="Button" parent="RootVBox/TopBar/TopMargin/TopHBox"]
+custom_minimum_size = Vector2(100, 36)
 layout_mode = 2
 text = "🏆 成就"
 
-[node name="SpeedLabel" type="Label" parent="RootMargin/RootVBox/TopBar/TopHBox"]
-layout_mode = 2
-text = "速度:"
-vertical_alignment = 1
-
-[node name="SpeedButtons" type="HBoxContainer" parent="RootMargin/RootVBox/TopBar/TopHBox"]
+[node name="SpeedButtons" type="HBoxContainer" parent="RootVBox/TopBar/TopMargin/TopHBox"]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_constants/separation = 4
 
-[node name="SaveButton" type="Button" parent="RootMargin/RootVBox/TopBar/TopHBox"]
+[node name="SaveButton" type="Button" parent="RootVBox/TopBar/TopMargin/TopHBox"]
+custom_minimum_size = Vector2(90, 36)
 layout_mode = 2
 text = "💾 存档"
 
-[node name="HelpButton" type="Button" parent="RootMargin/RootVBox/TopBar/TopHBox"]
+[node name="HelpButton" type="Button" parent="RootVBox/TopBar/TopMargin/TopHBox"]
+custom_minimum_size = Vector2(50, 36)
 layout_mode = 2
 text = "❓"
 
-[node name="NewsTicker" parent="RootMargin/RootVBox" instance=ExtResource("4")]
+# ========== 新闻 Ticker ==========
+[node name="NewsTicker" parent="RootVBox" instance=ExtResource("4")]
+custom_minimum_size = Vector2(0, 28)
 layout_mode = 2
 
-[node name="MainHBox" type="HBoxContainer" parent="RootMargin/RootVBox"]
-layout_mode = 2
-size_flags_vertical = 3
-theme_override_constants/separation = 10
-
-[node name="LeftPanel" type="PanelContainer" parent="RootMargin/RootVBox/MainHBox"]
-custom_minimum_size = Vector2(460, 0)
+# ========== 中央三栏 ==========
+[node name="MainHBox" type="HBoxContainer" parent="RootVBox"]
 layout_mode = 2
 size_flags_vertical = 3
+theme_override_constants/separation = 0
 
-[node name="LeftVBox" type="VBoxContainer" parent="RootMargin/RootVBox/MainHBox/LeftPanel"]
+# 左侧 - 员工面板
+[node name="LeftPanel" type="PanelContainer" parent="RootVBox/MainHBox"]
+custom_minimum_size = Vector2(400, 0)
 layout_mode = 2
-theme_override_constants/separation = 6
+size_flags_vertical = 3
 
-[node name="EmpHeader" type="HBoxContainer" parent="RootMargin/RootVBox/MainHBox/LeftPanel/LeftVBox"]
+[node name="LeftMargin" type="MarginContainer" parent="RootVBox/MainHBox/LeftPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="LeftVBox" type="VBoxContainer" parent="RootVBox/MainHBox/LeftPanel/LeftMargin"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="EmpHeader" type="HBoxContainer" parent="RootVBox/MainHBox/LeftPanel/LeftMargin/LeftVBox"]
 layout_mode = 2
 
-[node name="EmpCountLabel" type="Label" parent="RootMargin/RootVBox/MainHBox/LeftPanel/LeftVBox/EmpHeader"]
+[node name="EmpCountLabel" type="Label" parent="RootVBox/MainHBox/LeftPanel/LeftMargin/LeftVBox/EmpHeader"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
-text = "👥 0/12"
+theme_override_font_sizes/font_size = 16
+text = "👥 员工 0/12"
 vertical_alignment = 1
 
-[node name="HireButton" type="Button" parent="RootMargin/RootVBox/MainHBox/LeftPanel/LeftVBox/EmpHeader"]
+[node name="HireButton" type="Button" parent="RootVBox/MainHBox/LeftPanel/LeftMargin/LeftVBox/EmpHeader"]
+custom_minimum_size = Vector2(110, 36)
 layout_mode = 2
 text = "＋ 招聘"
 
-[node name="EmpScroll" type="ScrollContainer" parent="RootMargin/RootVBox/MainHBox/LeftPanel/LeftVBox"]
+[node name="EmpScroll" type="ScrollContainer" parent="RootVBox/MainHBox/LeftPanel/LeftMargin/LeftVBox"]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="EmployeeList" type="VBoxContainer" parent="RootMargin/RootVBox/MainHBox/LeftPanel/LeftVBox/EmpScroll"]
+[node name="EmployeeList" type="VBoxContainer" parent="RootVBox/MainHBox/LeftPanel/LeftMargin/LeftVBox/EmpScroll"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_constants/separation = 4
+theme_override_constants/separation = 6
 
-[node name="CenterVBox" type="VBoxContainer" parent="RootMargin/RootVBox/MainHBox"]
+# 中央 - 办公室 + 事件 + 部门
+[node name="CenterVBox" type="VBoxContainer" parent="RootVBox/MainHBox"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-theme_override_constants/separation = 10
+theme_override_constants/separation = 0
 
-[node name="CenterTabs" type="TabContainer" parent="RootMargin/RootVBox/MainHBox/CenterVBox"]
+[node name="CenterTabs" type="TabContainer" parent="RootVBox/MainHBox/CenterVBox"]
 layout_mode = 2
 size_flags_vertical = 3
 size_flags_stretch_ratio = 3.0
 
-[node name="OfficeTab" type="Control" parent="RootMargin/RootVBox/MainHBox/CenterVBox/CenterTabs"]
+[node name="OfficeTab" type="MarginContainer" parent="RootVBox/MainHBox/CenterVBox/CenterTabs"]
 layout_mode = 2
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_bottom = 8
 metadata/_tab_name = "办公室"
 
-[node name="OfficeVBox" type="VBoxContainer" parent="RootMargin/RootVBox/MainHBox/CenterVBox/CenterTabs/OfficeTab"]
+[node name="OfficeVBox" type="VBoxContainer" parent="RootVBox/MainHBox/CenterVBox/CenterTabs/OfficeTab"]
 layout_mode = 2
 theme_override_constants/separation = 6
 
-[node name="FloorTabBar" type="HBoxContainer" parent="RootMargin/RootVBox/MainHBox/CenterVBox/CenterTabs/OfficeTab/OfficeVBox"]
+[node name="FloorTabBar" type="HBoxContainer" parent="RootVBox/MainHBox/CenterVBox/CenterTabs/OfficeTab/OfficeVBox"]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_constants/separation = 8
 
-[node name="OfficeViewContainer" type="Control" parent="RootMargin/RootVBox/MainHBox/CenterVBox/CenterTabs/OfficeTab/OfficeVBox"]
+[node name="OfficeViewContainer" type="Control" parent="RootVBox/MainHBox/CenterVBox/CenterTabs/OfficeTab/OfficeVBox"]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="OfficeView" parent="RootMargin/RootVBox/MainHBox/CenterVBox/CenterTabs/OfficeTab/OfficeVBox/OfficeViewContainer" instance=ExtResource("3")]
+[node name="OfficeView" parent="RootVBox/MainHBox/CenterVBox/CenterTabs/OfficeTab/OfficeVBox/OfficeViewContainer" instance=ExtResource("3")]
 unique_name_in_owner = true
 position = Vector2(10, 10)
 
-[node name="IncidentTab" type="PanelContainer" parent="RootMargin/RootVBox/MainHBox/CenterVBox/CenterTabs"]
+[node name="IncidentTab" type="MarginContainer" parent="RootVBox/MainHBox/CenterVBox/CenterTabs"]
 layout_mode = 2
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_bottom = 8
 metadata/_tab_name = "事件"
 
-[node name="IncidentVBox" type="VBoxContainer" parent="RootMargin/RootVBox/MainHBox/CenterVBox/CenterTabs/IncidentTab"]
+[node name="IncidentVBox" type="VBoxContainer" parent="RootVBox/MainHBox/CenterVBox/CenterTabs/IncidentTab"]
 layout_mode = 2
-theme_override_constants/separation = 6
+theme_override_constants/separation = 8
 
-[node name="IncidentTitle" type="Label" parent="RootMargin/RootVBox/MainHBox/CenterVBox/CenterTabs/IncidentTab/IncidentVBox"]
+[node name="IncidentTitle" type="Label" parent="RootVBox/MainHBox/CenterVBox/CenterTabs/IncidentTab/IncidentVBox"]
 layout_mode = 2
+theme_override_font_sizes/font_size = 16
 text = "🚨 活跃安全事件"
 horizontal_alignment = 1
 
-[node name="IncidentScroll" type="ScrollContainer" parent="RootMargin/RootVBox/MainHBox/CenterVBox/CenterTabs/IncidentTab/IncidentVBox"]
+[node name="IncidentScroll" type="ScrollContainer" parent="RootVBox/MainHBox/CenterVBox/CenterTabs/IncidentTab/IncidentVBox"]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="IncidentList" type="VBoxContainer" parent="RootMargin/RootVBox/MainHBox/CenterVBox/CenterTabs/IncidentTab/IncidentVBox/IncidentScroll"]
+[node name="IncidentList" type="VBoxContainer" parent="RootVBox/MainHBox/CenterVBox/CenterTabs/IncidentTab/IncidentVBox/IncidentScroll"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_constants/separation = 4
+theme_override_constants/separation = 6
 
-[node name="DeptPanel" type="PanelContainer" parent="RootMargin/RootVBox/MainHBox/CenterVBox"]
+[node name="DeptPanel" type="PanelContainer" parent="RootVBox/MainHBox/CenterVBox"]
+custom_minimum_size = Vector2(0, 220)
 layout_mode = 2
-size_flags_vertical = 3
-size_flags_stretch_ratio = 1.0
+size_flags_vertical = 0
 
-[node name="DeptVBox" type="VBoxContainer" parent="RootMargin/RootVBox/MainHBox/CenterVBox/DeptPanel"]
+[node name="DeptMargin" type="MarginContainer" parent="RootVBox/MainHBox/CenterVBox/DeptPanel"]
 layout_mode = 2
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_bottom = 8
 
-[node name="DeptTitle" type="Label" parent="RootMargin/RootVBox/MainHBox/CenterVBox/DeptPanel/DeptVBox"]
-layout_mode = 2
-text = "🏢 部门建设"
-horizontal_alignment = 1
-
-[node name="ComboLabel" type="Label" parent="RootMargin/RootVBox/MainHBox/CenterVBox/DeptPanel/DeptVBox"]
-unique_name_in_owner = true
-layout_mode = 2
-text = "💡 设施 combo：同层相邻建成即激活"
-horizontal_alignment = 1
-theme_override_font_sizes/font_size = 11
-
-[node name="DeptGrid" type="GridContainer" parent="RootMargin/RootVBox/MainHBox/CenterVBox/DeptPanel/DeptVBox"]
-unique_name_in_owner = true
-layout_mode = 2
-columns = 3
-theme_override_constants/h_separation = 10
-theme_override_constants/v_separation = 10
-
-[node name="RightPanel" type="PanelContainer" parent="RootMargin/RootVBox/MainHBox"]
-custom_minimum_size = Vector2(360, 0)
-layout_mode = 2
-size_flags_vertical = 3
-
-[node name="RightVBox" type="VBoxContainer" parent="RootMargin/RootVBox/MainHBox/RightPanel"]
+[node name="DeptVBox" type="VBoxContainer" parent="RootVBox/MainHBox/CenterVBox/DeptPanel/DeptMargin"]
 layout_mode = 2
 theme_override_constants/separation = 6
 
-[node name="AlertTitle" type="Label" parent="RootMargin/RootVBox/MainHBox/RightPanel/RightVBox"]
+[node name="DeptTitle" type="Label" parent="RootVBox/MainHBox/CenterVBox/DeptPanel/DeptMargin/DeptVBox"]
 layout_mode = 2
-text = "📡 安全日志"
+theme_override_font_sizes/font_size = 15
+text = "🏢 部门建设"
 horizontal_alignment = 1
 
-[node name="RankingPanel" type="PanelContainer" parent="RootMargin/RootVBox/MainHBox/RightPanel/RightVBox"]
+[node name="ComboLabel" type="Label" parent="RootVBox/MainHBox/CenterVBox/DeptPanel/DeptMargin/DeptVBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_font_sizes/font_size = 11
+text = "💡 设施 combo：同层相邻建成即激活"
+horizontal_alignment = 1
+
+[node name="DeptGrid" type="GridContainer" parent="RootVBox/MainHBox/CenterVBox/DeptPanel/DeptMargin/DeptVBox"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+columns = 6
+theme_override_constants/h_separation = 8
+theme_override_constants/v_separation = 8
+
+# 右侧 - 日志 + 排行
+[node name="RightPanel" type="PanelContainer" parent="RootVBox/MainHBox"]
+custom_minimum_size = Vector2(340, 0)
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="RightMargin" type="MarginContainer" parent="RootVBox/MainHBox/RightPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="RightVBox" type="VBoxContainer" parent="RootVBox/MainHBox/RightPanel/RightMargin"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="RankingPanel" type="PanelContainer" parent="RootVBox/MainHBox/RightPanel/RightMargin/RightVBox"]
 layout_mode = 2
 
-[node name="RankingVBox" type="VBoxContainer" parent="RootMargin/RootVBox/MainHBox/RightPanel/RightVBox/RankingPanel"]
+[node name="RankingVBox" type="VBoxContainer" parent="RootVBox/MainHBox/RightPanel/RightMargin/RightVBox/RankingPanel"]
 layout_mode = 2
+theme_override_constants/separation = 4
 
-[node name="RankingTitle" type="Label" parent="RootMargin/RootVBox/MainHBox/RightPanel/RightVBox/RankingPanel/RankingVBox"]
+[node name="RankingTitle" type="Label" parent="RootVBox/MainHBox/RightPanel/RightMargin/RightVBox/RankingPanel/RankingVBox"]
 layout_mode = 2
+theme_override_font_sizes/font_size = 14
 text = "🏆 月度行业排名"
 horizontal_alignment = 1
 
-[node name="RankingList" type="VBoxContainer" parent="RootMargin/RootVBox/MainHBox/RightPanel/RightVBox/RankingPanel/RankingVBox"]
+[node name="RankingList" type="VBoxContainer" parent="RootVBox/MainHBox/RightPanel/RightMargin/RightVBox/RankingPanel/RankingVBox"]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_constants/separation = 2
 
-[node name="AlertScroll" type="ScrollContainer" parent="RootMargin/RootVBox/MainHBox/RightPanel/RightVBox"]
+[node name="AlertTitle" type="Label" parent="RootVBox/MainHBox/RightPanel/RightMargin/RightVBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "📡 安全日志"
+horizontal_alignment = 1
+
+[node name="AlertScroll" type="ScrollContainer" parent="RootVBox/MainHBox/RightPanel/RightMargin/RightVBox"]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="AlertContainer" type="VBoxContainer" parent="RootMargin/RootVBox/MainHBox/RightPanel/RightVBox/AlertScroll"]
+[node name="AlertContainer" type="VBoxContainer" parent="RootVBox/MainHBox/RightPanel/RightMargin/RightVBox/AlertScroll"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
+theme_override_constants/separation = 2
 
+# ========== 底部状态栏 ==========
+[node name="BottomBar" type="PanelContainer" parent="RootVBox"]
+custom_minimum_size = Vector2(0, 36)
+layout_mode = 2
+
+[node name="BottomMargin" type="MarginContainer" parent="RootVBox/BottomBar"]
+layout_mode = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 2
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 2
+
+[node name="BottomHBox" type="HBoxContainer" parent="RootVBox/BottomBar/BottomMargin"]
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="StatsLabel" type="Label" parent="RootVBox/BottomBar/BottomMargin/BottomHBox"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 13
+text = "拦截 0 | 失守 0 | 员工 0 人 | 成就 0/0"
+vertical_alignment = 1
+
+[node name="VersionLabel" type="Label" parent="RootVBox/BottomBar/BottomMargin/BottomHBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+theme_override_colors/font_color = Color(0.5, 0.55, 0.65, 1)
+text = "v1.2 安全部物语"
+vertical_alignment = 1
+
+# ========== Toast 容器 ==========
 [node name="AchievementToastContainer" type="VBoxContainer" parent="."]
 unique_name_in_owner = true
 layout_mode = 1
@@ -280,37 +368,20 @@ anchor_left = 1.0
 anchor_top = 1.0
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_left = -320.0
-offset_top = -200.0
+offset_left = -360.0
+offset_top = -300.0
 offset_right = -20.0
 offset_bottom = -20.0
 grow_horizontal = 0
 grow_vertical = 0
 theme_override_constants/separation = 6
 
-[node name="BottomBar" type="PanelContainer" parent="RootMargin/RootVBox"]
-layout_mode = 2
-
-[node name="BottomHBox" type="HBoxContainer" parent="RootMargin/RootVBox/BottomBar"]
-layout_mode = 2
-
-[node name="StatsLabel" type="Label" parent="RootMargin/RootVBox/BottomBar/BottomHBox"]
-unique_name_in_owner = true
-layout_mode = 2
-size_flags_horizontal = 3
-text = "拦截 0 | 失守 0 | 员工 0 人 | 成就 0/0"
-vertical_alignment = 1
-
-[node name="VersionLabel" type="Label" parent="RootMargin/RootVBox/BottomBar/BottomHBox"]
-layout_mode = 2
-text = "v1.0 安全部物语"
-vertical_alignment = 1
-
+# ========== 对话框 ==========
 [node name="HireDialog" type="AcceptDialog" parent="."]
 unique_name_in_owner = true
 title = "招聘新员工"
 initial_position = 2
-size = Vector2i(520, 500)
+size = Vector2i(560, 560)
 transient = true
 exclusive = true
 ok_button_text = "关闭"
@@ -323,13 +394,13 @@ anchor_bottom = 1.0
 [node name="HireList" type="VBoxContainer" parent="HireDialog/HireScroll"]
 unique_name_in_owner = true
 size_flags_horizontal = 3
-theme_override_constants/separation = 8
+theme_override_constants/separation = 10
 
 [node name="TrainDialog" type="AcceptDialog" parent="."]
 unique_name_in_owner = true
 title = "选择培训课程"
 initial_position = 2
-size = Vector2i(560, 500)
+size = Vector2i(600, 560)
 transient = true
 exclusive = true
 ok_button_text = "关闭"
@@ -342,13 +413,13 @@ anchor_bottom = 1.0
 [node name="TrainList" type="VBoxContainer" parent="TrainDialog/TrainScroll"]
 unique_name_in_owner = true
 size_flags_horizontal = 3
-theme_override_constants/separation = 6
+theme_override_constants/separation = 8
 
 [node name="SaveSlotDialog" type="AcceptDialog" parent="."]
 unique_name_in_owner = true
 title = "存档管理"
 initial_position = 2
-size = Vector2i(600, 320)
+size = Vector2i(640, 360)
 transient = true
 exclusive = true
 ok_button_text = "关闭"
@@ -361,13 +432,13 @@ anchor_bottom = 1.0
 [node name="SaveSlotList" type="VBoxContainer" parent="SaveSlotDialog/SaveSlotScroll"]
 unique_name_in_owner = true
 size_flags_horizontal = 3
-theme_override_constants/separation = 6
+theme_override_constants/separation = 8
 
 [node name="ChoiceDialog" type="AcceptDialog" parent="."]
 unique_name_in_owner = true
 title = "事件决策"
 initial_position = 2
-size = Vector2i(520, 380)
+size = Vector2i(560, 420)
 transient = true
 exclusive = true
 
@@ -375,11 +446,12 @@ exclusive = true
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-theme_override_constants/separation = 12
+theme_override_constants/separation = 14
 
 [node name="ChoiceTitle" type="Label" parent="ChoiceDialog/ChoiceVBox"]
 unique_name_in_owner = true
 layout_mode = 2
+theme_override_font_sizes/font_size = 18
 text = "事件决策"
 horizontal_alignment = 1
 
@@ -393,13 +465,13 @@ autowrap_mode = 2
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3
-theme_override_constants/separation = 6
+theme_override_constants/separation = 8
 
 [node name="AchievementDialog" type="AcceptDialog" parent="."]
 unique_name_in_owner = true
 title = "成就列表"
 initial_position = 2
-size = Vector2i(640, 600)
+size = Vector2i(680, 640)
 transient = true
 exclusive = true
 ok_button_text = "关闭"
@@ -412,13 +484,13 @@ anchor_bottom = 1.0
 [node name="AchievementList" type="VBoxContainer" parent="AchievementDialog/AchievementScroll"]
 unique_name_in_owner = true
 size_flags_horizontal = 3
-theme_override_constants/separation = 4
+theme_override_constants/separation = 6
 
 [node name="AwardDialog" type="AcceptDialog" parent="."]
 unique_name_in_owner = true
 title = "年度安全大奖"
 initial_position = 2
-size = Vector2i(520, 700)
+size = Vector2i(560, 720)
 transient = true
 exclusive = true
 ok_button_text = "领奖"
@@ -431,23 +503,13 @@ anchor_bottom = 1.0
 [node name="AwardContent" type="VBoxContainer" parent="AwardDialog/AwardScroll"]
 unique_name_in_owner = true
 size_flags_horizontal = 3
-theme_override_constants/separation = 8
-
-[node name="GameOverDialog" type="AcceptDialog" parent="."]
-unique_name_in_owner = true
-title = "💀 游戏结束"
-initial_position = 2
-size = Vector2i(420, 380)
-transient = true
-exclusive = true
-ok_button_text = "重新开始"
-cancel_button_text = "开启 NG+ (二周目)"
+theme_override_constants/separation = 10
 
 [node name="EmpDetailDialog" type="AcceptDialog" parent="."]
 unique_name_in_owner = true
 title = "员工详情"
 initial_position = 2
-size = Vector2i(480, 460)
+size = Vector2i(520, 500)
 transient = true
 exclusive = true
 ok_button_text = "关闭"
@@ -457,13 +519,13 @@ unique_name_in_owner = true
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-theme_override_constants/separation = 8
+theme_override_constants/separation = 10
 
 [node name="CEOReviewDialog" type="AcceptDialog" parent="."]
 unique_name_in_owner = true
 title = "季度 CEO 评价"
 initial_position = 2
-size = Vector2i(520, 400)
+size = Vector2i(560, 420)
 transient = true
 exclusive = true
 ok_button_text = "继续"
@@ -473,13 +535,13 @@ unique_name_in_owner = true
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-theme_override_constants/separation = 12
+theme_override_constants/separation = 14
 
 [node name="BudgetDialog" type="AcceptDialog" parent="."]
 unique_name_in_owner = true
 title = "预算谈判"
 initial_position = 2
-size = Vector2i(560, 400)
+size = Vector2i(600, 440)
 transient = true
 exclusive = true
 
@@ -488,12 +550,23 @@ unique_name_in_owner = true
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-theme_override_constants/separation = 8
+theme_override_constants/separation = 10
+
+[node name="GameOverDialog" type="AcceptDialog" parent="."]
+unique_name_in_owner = true
+title = "💀 游戏结束"
+initial_position = 2
+size = Vector2i(480, 420)
+transient = true
+exclusive = true
+ok_button_text = "重新开始"
+cancel_button_text = "开启 NG+ (二周目)"
 
 [node name="GameOverVBox" type="VBoxContainer" parent="GameOverDialog"]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+
 [node name="GameOverLabel" type="Label" parent="GameOverDialog/GameOverVBox"]
 unique_name_in_owner = true
 layout_mode = 2
@@ -522,9 +595,10 @@ layout_mode = 2
 [node name="TutorialOverlay" parent="." instance=ExtResource("5")]
 unique_name_in_owner = true
 
-[connection signal="pressed" from="RootMargin/RootVBox/TopBar/TopHBox/AchievementButton" to="." method="_on_achievement_button_pressed"]
-[connection signal="pressed" from="RootMargin/RootVBox/TopBar/TopHBox/SaveButton" to="." method="_on_save_button_pressed"]
-[connection signal="pressed" from="RootMargin/RootVBox/TopBar/TopHBox/HelpButton" to="." method="_on_help_button_pressed"]
-[connection signal="pressed" from="RootMargin/RootVBox/MainHBox/LeftPanel/LeftVBox/EmpHeader/HireButton" to="." method="_on_hire_button_pressed"]
+# ========== 信号连接 ==========
+[connection signal="pressed" from="RootVBox/TopBar/TopMargin/TopHBox/AchievementButton" to="." method="_on_achievement_button_pressed"]
+[connection signal="pressed" from="RootVBox/TopBar/TopMargin/TopHBox/SaveButton" to="." method="_on_save_button_pressed"]
+[connection signal="pressed" from="RootVBox/TopBar/TopMargin/TopHBox/HelpButton" to="." method="_on_help_button_pressed"]
+[connection signal="pressed" from="RootVBox/MainHBox/LeftPanel/LeftMargin/LeftVBox/EmpHeader/HireButton" to="." method="_on_hire_button_pressed"]
 [connection signal="confirmed" from="GameOverDialog" to="." method="_on_restart"]
 [connection signal="canceled" from="GameOverDialog" to="." method="_on_ng_plus_start"]

@@ -221,7 +221,7 @@ func _get_floor_tab_bar() -> HBoxContainer:
 	var main := get_tree().root.get_node_or_null("Main")
 	if main == null:
 		return null
-	return main.get_node_or_null("RootMargin/RootVBox/MainHBox/CenterVBox/CenterTabs/OfficeTab/OfficeVBox/FloorTabBar") as HBoxContainer
+	return main.get_node_or_null("RootVBox/MainHBox/CenterVBox/CenterTabs/OfficeTab/OfficeVBox/FloorTabBar") as HBoxContainer
 
 func _is_floor_unlocked(floor_id: int) -> bool:
 	var required = FLOORS[floor_id]["unlocked_by"]

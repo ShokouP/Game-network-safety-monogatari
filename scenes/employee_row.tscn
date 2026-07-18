@@ -12,9 +12,9 @@ theme_override_constants/separation = 8
 
 [node name="AvatarRect" type="TextureRect" parent="MainHBox"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(68, 68)
+custom_minimum_size = Vector2(56, 56)
 layout_mode = 2
-size_flags_vertical = 4
+size_flags_vertical = 1
 texture_filter = 1
 expand_mode = 1
 stretch_mode = 5
@@ -22,7 +22,8 @@ stretch_mode = 5
 [node name="VBox" type="VBoxContainer" parent="MainHBox"]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_constants/separation = 4
+size_flags_vertical = 4
+theme_override_constants/separation = 6
 
 [node name="TopRow" type="HBoxContainer" parent="MainHBox/VBox"]
 layout_mode = 2
@@ -33,12 +34,14 @@ layout_mode = 2
 size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 13
 text = "员工名"
+vertical_alignment = 1
 
 [node name="StatusLabel" type="Label" parent="MainHBox/VBox/TopRow"]
 unique_name_in_owner = true
 layout_mode = 2
 theme_override_font_sizes/font_size = 12
 text = "✓"
+vertical_alignment = 1
 
 [node name="BtnRow" type="HBoxContainer" parent="MainHBox/VBox"]
 layout_mode = 2
@@ -46,7 +49,7 @@ theme_override_constants/separation = 4
 
 [node name="DetailButton" type="Button" parent="MainHBox/VBox/BtnRow"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 26)
+custom_minimum_size = Vector2(0, 30)
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 11
@@ -54,7 +57,7 @@ text = "👁 详情"
 
 [node name="TrainButton" type="Button" parent="MainHBox/VBox/BtnRow"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 26)
+custom_minimum_size = Vector2(0, 30)
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 11
@@ -62,7 +65,7 @@ text = "📚 培训"
 
 [node name="FireButton" type="Button" parent="MainHBox/VBox/BtnRow"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 26)
+custom_minimum_size = Vector2(0, 30)
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 11

@@ -80,7 +80,7 @@ func _ready() -> void:
 	_refresh_all()
 	_refresh_combo_display()
 	# 加载 logo
-	var logo_rect := get_node_or_null("RootMargin/RootVBox/TopBar/TopHBox/LogoRect")
+	var logo_rect := get_node_or_null("RootVBox/TopBar/TopMargin/TopHBox/LogoRect")
 	if logo_rect and ResourceLoader.exists("res://assets/illustrations/game_logo.jpg"):
 		logo_rect.texture = load("res://assets/illustrations/game_logo.jpg")
 	# CEO 名 + 公司名
