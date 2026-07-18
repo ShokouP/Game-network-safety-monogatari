@@ -158,10 +158,7 @@ size_flags_vertical = 3
 layout_mode = 2
 metadata/_tab_name = "办公室"
 
-[node name="OfficeScroll" type="ScrollContainer" parent="RootMargin/RootVBox/MainHBox/CenterVBox/CenterTabs/OfficeTab"]
-layout_mode = 2
-
-[node name="OfficeView" parent="RootMargin/RootVBox/MainHBox/CenterVBox/CenterTabs/OfficeTab/OfficeScroll" instance=ExtResource("3")]
+[node name="OfficeView" parent="RootMargin/RootVBox/MainHBox/CenterVBox/CenterTabs/OfficeTab" instance=ExtResource("3")]
 unique_name_in_owner = true
 position = Vector2(10, 30)
 

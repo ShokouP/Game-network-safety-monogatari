@@ -18,6 +18,7 @@ const FLOORS := {
 @onready var employee_container: Node2D = %EmployeeContainer
 @onready var floor_tab: HBoxContainer = %FloorTab
 @onready var floor_label: Label = %FloorLabel
+@onready var camera: Camera2D = $Camera
 
 var current_floor: int = 0
 var employee_agents: Dictionary = {}
@@ -31,6 +32,25 @@ func _ready() -> void:
 	GameState.dept_upgraded.connect(_on_dept_upgraded)
 	EmployeeRoster.employee_hired.connect(_on_employee_hired)
 	EmployeeRoster.employee_fired.connect(_on_employee_fired)
+	# 自动适配视口
+	call_deferred("_fit_camera")
+	get_viewport().size_changed.connect(_fit_camera)
+
+func _fit_camera() -> void:
+	## 根据视口宽度自动缩放 Camera2D，让 640x384 楼层刚好填充
+	if camera == null:
+		return
+	var viewport_size := get_viewport_rect().size
+	var floor_w := float(FLOOR_WIDTH * TILE_SIZE)
+	var floor_h := float(FLOOR_HEIGHT * TILE_SIZE)
+	# 留边：楼层占视口的 80%
+	var target_w := viewport_size.x * 0.85
+	var target_h := viewport_size.y * 0.7
+	var zoom_x := target_w / floor_w
+	var zoom_y := target_h / floor_h
+	var zoom := minf(zoom_x, zoom_y)
+	camera.zoom = Vector2(zoom, zoom)
+	camera.position = Vector2(floor_w / 2.0, floor_h / 2.0 + 20)
 
 func _build_floor(floor_id: int) -> void:
 	for c in floor_container.get_children():
