@@ -40,6 +40,8 @@ func _ready() -> void:
 	# 默认显示主按钮
 	ceo_create_panel.visible = false
 	save_list_panel.visible = false
+	# 调试：检查 start_btn 是否成功连接
+	print("[MainMenu] start_btn=%s, connected=%s" % [start_btn, start_btn.pressed.is_connected(_on_start_game)])
 
 func _build_avatar_grid() -> void:
 	for c in avatar_grid.get_children():
@@ -142,12 +144,14 @@ func _on_load_slot(slot: int) -> void:
 		pass
 
 func _on_start_game() -> void:
+	print("[MainMenu] _on_start_game called")
 	var ceo_name := ceo_name_input.text.strip_edges()
 	if ceo_name.is_empty():
 		ceo_name = "安全部长"
 	var company_name := company_name_input.text.strip_edges()
 	if company_name.is_empty():
 		company_name = "安创科技"
+	print("[MainMenu] ceo_name=%s, company=%s, avatar=%d" % [ceo_name, company_name, selected_avatar_id])
 	# 重置并设置 CEO
 	EmployeeRoster.reset()
 	IncidentQueue.reset()
@@ -155,6 +159,7 @@ func _on_start_game() -> void:
 	GameState.ceo_name = ceo_name
 	GameState.company_name = company_name
 	GameState.ceo_avatar_id = selected_avatar_id
+	print("[MainMenu] switching to main scene...")
 	_go_to_main()
 
 func _go_to_main() -> void:

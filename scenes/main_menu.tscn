@@ -103,6 +103,7 @@ text = "v1.2  ·  by 火山方舟 seedream 美术"
 [node name="CEOCreatePanel" type="PanelContainer" parent="."]
 unique_name_in_owner = true
 visible = false
+z_index = 10
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -198,6 +199,7 @@ text = "🚀 开始游戏"
 [node name="SaveListPanel" type="PanelContainer" parent="."]
 unique_name_in_owner = true
 visible = false
+z_index = 5
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
