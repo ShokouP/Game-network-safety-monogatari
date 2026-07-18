@@ -1,0 +1,14 @@
+# 火山方舟 API key（敏感，不要提交）
+.env.volc
+.env
+*.key
+
+# Godot 4 编辑器缓存
+.godot/
+
+# 系统
+.DS_Store
+Thumbs.db
+
+# 截图与临时
+screenshots/

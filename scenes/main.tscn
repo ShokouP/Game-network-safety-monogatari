@@ -1,0 +1,504 @@
+[gd_scene load_steps=5 format=3 uid="uid://security_dept_main"]
+
+[ext_resource type="Script" path="res://scripts/main.gd" id="1"]
+[ext_resource type="Script" path="res://scripts/game_loop.gd" id="2"]
+[ext_resource type="PackedScene" uid="uid://office_view" path="res://scenes/office_view.tscn" id="3"]
+[ext_resource type="PackedScene" uid="uid://news_ticker" path="res://scenes/news_ticker.tscn" id="4"]
+
+[node name="Main" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1")
+
+[node name="GameLoop" type="Node" parent="."]
+script = ExtResource("2")
+
+[node name="Background" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0.10, 0.13, 0.18, 1)
+
+[node name="RootMargin" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_bottom = 12
+
+[node name="RootVBox" type="VBoxContainer" parent="RootMargin"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="TopBar" type="PanelContainer" parent="RootMargin/RootVBox"]
+layout_mode = 2
+
+[node name="TopHBox" type="HBoxContainer" parent="RootMargin/RootVBox/TopBar"]
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="LogoRect" type="TextureRect" parent="RootMargin/RootVBox/TopBar/TopHBox"]
+custom_minimum_size = Vector2(36, 36)
+layout_mode = 2
+texture_filter = 1
+expand_mode = 1
+stretch_mode = 5
+
+[node name="FundsLabel" type="Label" parent="RootMargin/RootVBox/TopBar/TopHBox"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "💰 ¥50000"
+vertical_alignment = 1
+
+[node name="RepLabel" type="Label" parent="RootMargin/RootVBox/TopBar/TopHBox"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "⭐ 10/100"
+vertical_alignment = 1
+
+[node name="RpLabel" type="Label" parent="RootMargin/RootVBox/TopBar/TopHBox"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "🔬 0 RP"
+vertical_alignment = 1
+
+[node name="DateLabel" type="Label" parent="RootMargin/RootVBox/TopBar/TopHBox"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "📅 第1年 04月 01日"
+vertical_alignment = 1
+
+[node name="Spacer" type="Control" parent="RootMargin/RootVBox/TopBar/TopHBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="AchievementButton" type="Button" parent="RootMargin/RootVBox/TopBar/TopHBox"]
+layout_mode = 2
+text = "🏆 成就"
+
+[node name="SpeedLabel" type="Label" parent="RootMargin/RootVBox/TopBar/TopHBox"]
+layout_mode = 2
+text = "速度:"
+vertical_alignment = 1
+
+[node name="SpeedButtons" type="HBoxContainer" parent="RootMargin/RootVBox/TopBar/TopHBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="SaveButton" type="Button" parent="RootMargin/RootVBox/TopBar/TopHBox"]
+layout_mode = 2
+text = "💾 存档"
+
+[node name="HelpButton" type="Button" parent="RootMargin/RootVBox/TopBar/TopHBox"]
+layout_mode = 2
+text = "❓"
+
+[node name="NewsTicker" parent="RootMargin/RootVBox" instance=ExtResource("4")]
+layout_mode = 2
+
+[node name="MainHBox" type="HBoxContainer" parent="RootMargin/RootVBox"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 8
+
+[node name="LeftPanel" type="PanelContainer" parent="RootMargin/RootVBox/MainHBox"]
+custom_minimum_size = Vector2(340, 0)
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="LeftVBox" type="VBoxContainer" parent="RootMargin/RootVBox/MainHBox/LeftPanel"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="EmpHeader" type="HBoxContainer" parent="RootMargin/RootVBox/MainHBox/LeftPanel/LeftVBox"]
+layout_mode = 2
+
+[node name="EmpCountLabel" type="Label" parent="RootMargin/RootVBox/MainHBox/LeftPanel/LeftVBox/EmpHeader"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "👥 0/12"
+vertical_alignment = 1
+
+[node name="HireButton" type="Button" parent="RootMargin/RootVBox/MainHBox/LeftPanel/LeftVBox/EmpHeader"]
+layout_mode = 2
+text = "＋ 招聘"
+
+[node name="EmpScroll" type="ScrollContainer" parent="RootMargin/RootVBox/MainHBox/LeftPanel/LeftVBox"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="EmployeeList" type="VBoxContainer" parent="RootMargin/RootVBox/MainHBox/LeftPanel/LeftVBox/EmpScroll"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 4
+
+[node name="CenterVBox" type="VBoxContainer" parent="RootMargin/RootVBox/MainHBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 8
+
+[node name="CenterTabs" type="TabContainer" parent="RootMargin/RootVBox/MainHBox/CenterVBox"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="OfficeTab" type="Control" parent="RootMargin/RootVBox/MainHBox/CenterVBox/CenterTabs"]
+layout_mode = 2
+metadata/_tab_name = "办公室"
+
+[node name="OfficeView" parent="RootMargin/RootVBox/MainHBox/CenterVBox/CenterTabs/OfficeTab" instance=ExtResource("3")]
+unique_name_in_owner = true
+position = Vector2(0, 40)
+
+[node name="IncidentTab" type="PanelContainer" parent="RootMargin/RootVBox/MainHBox/CenterVBox/CenterTabs"]
+layout_mode = 2
+metadata/_tab_name = "事件"
+
+[node name="IncidentVBox" type="VBoxContainer" parent="RootMargin/RootVBox/MainHBox/CenterVBox/CenterTabs/IncidentTab"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="IncidentTitle" type="Label" parent="RootMargin/RootVBox/MainHBox/CenterVBox/CenterTabs/IncidentTab/IncidentVBox"]
+layout_mode = 2
+text = "🚨 活跃安全事件"
+horizontal_alignment = 1
+
+[node name="IncidentScroll" type="ScrollContainer" parent="RootMargin/RootVBox/MainHBox/CenterVBox/CenterTabs/IncidentTab/IncidentVBox"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="IncidentList" type="VBoxContainer" parent="RootMargin/RootVBox/MainHBox/CenterVBox/CenterTabs/IncidentTab/IncidentVBox/IncidentScroll"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 4
+
+[node name="DeptPanel" type="PanelContainer" parent="RootMargin/RootVBox/MainHBox/CenterVBox"]
+layout_mode = 2
+
+[node name="DeptVBox" type="VBoxContainer" parent="RootMargin/RootVBox/MainHBox/CenterVBox/DeptPanel"]
+layout_mode = 2
+
+[node name="DeptTitle" type="Label" parent="RootMargin/RootVBox/MainHBox/CenterVBox/DeptPanel/DeptVBox"]
+layout_mode = 2
+text = "🏢 部门建设"
+horizontal_alignment = 1
+
+[node name="ComboLabel" type="Label" parent="RootMargin/RootVBox/MainHBox/CenterVBox/DeptPanel/DeptVBox"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "💡 设施 combo：同层相邻建成即激活"
+horizontal_alignment = 1
+theme_override_font_sizes/font_size = 11
+
+[node name="DeptGrid" type="GridContainer" parent="RootMargin/RootVBox/MainHBox/CenterVBox/DeptPanel/DeptVBox"]
+unique_name_in_owner = true
+layout_mode = 2
+columns = 3
+theme_override_constants/h_separation = 8
+theme_override_constants/v_separation = 8
+
+[node name="RightPanel" type="PanelContainer" parent="RootMargin/RootVBox/MainHBox"]
+custom_minimum_size = Vector2(260, 0)
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="RightVBox" type="VBoxContainer" parent="RootMargin/RootVBox/MainHBox/RightPanel"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="AlertTitle" type="Label" parent="RootMargin/RootVBox/MainHBox/RightPanel/RightVBox"]
+layout_mode = 2
+text = "📡 安全日志"
+horizontal_alignment = 1
+
+[node name="RankingPanel" type="PanelContainer" parent="RootMargin/RootVBox/MainHBox/RightPanel/RightVBox"]
+layout_mode = 2
+
+[node name="RankingVBox" type="VBoxContainer" parent="RootMargin/RootVBox/MainHBox/RightPanel/RightVBox/RankingPanel"]
+layout_mode = 2
+
+[node name="RankingTitle" type="Label" parent="RootMargin/RootVBox/MainHBox/RightPanel/RightVBox/RankingPanel/RankingVBox"]
+layout_mode = 2
+text = "🏆 月度行业排名"
+horizontal_alignment = 1
+
+[node name="RankingList" type="VBoxContainer" parent="RootMargin/RootVBox/MainHBox/RightPanel/RightVBox/RankingPanel/RankingVBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="AlertScroll" type="ScrollContainer" parent="RootMargin/RootVBox/MainHBox/RightPanel/RightVBox"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="AlertContainer" type="VBoxContainer" parent="RootMargin/RootVBox/MainHBox/RightPanel/RightVBox/AlertScroll"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="AchievementToastContainer" type="VBoxContainer" parent="."]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -320.0
+offset_top = -200.0
+offset_right = -20.0
+offset_bottom = -20.0
+grow_horizontal = 0
+grow_vertical = 0
+theme_override_constants/separation = 6
+
+[node name="BottomBar" type="PanelContainer" parent="RootMargin/RootVBox"]
+layout_mode = 2
+
+[node name="BottomHBox" type="HBoxContainer" parent="RootMargin/RootVBox/BottomBar"]
+layout_mode = 2
+
+[node name="StatsLabel" type="Label" parent="RootMargin/RootVBox/BottomBar/BottomHBox"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "拦截 0 | 失守 0 | 员工 0 人 | 成就 0/0"
+vertical_alignment = 1
+
+[node name="VersionLabel" type="Label" parent="RootMargin/RootVBox/BottomBar/BottomHBox"]
+layout_mode = 2
+text = "v1.0 安全部物语"
+vertical_alignment = 1
+
+[node name="HireDialog" type="AcceptDialog" parent="."]
+unique_name_in_owner = true
+title = "招聘新员工"
+initial_position = 2
+size = Vector2i(520, 500)
+transient = true
+exclusive = true
+ok_button_text = "关闭"
+
+[node name="HireScroll" type="ScrollContainer" parent="HireDialog"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="HireList" type="VBoxContainer" parent="HireDialog/HireScroll"]
+unique_name_in_owner = true
+size_flags_horizontal = 3
+theme_override_constants/separation = 8
+
+[node name="TrainDialog" type="AcceptDialog" parent="."]
+unique_name_in_owner = true
+title = "选择培训课程"
+initial_position = 2
+size = Vector2i(560, 500)
+transient = true
+exclusive = true
+ok_button_text = "关闭"
+
+[node name="TrainScroll" type="ScrollContainer" parent="TrainDialog"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="TrainList" type="VBoxContainer" parent="TrainDialog/TrainScroll"]
+unique_name_in_owner = true
+size_flags_horizontal = 3
+theme_override_constants/separation = 6
+
+[node name="SaveSlotDialog" type="AcceptDialog" parent="."]
+unique_name_in_owner = true
+title = "存档管理"
+initial_position = 2
+size = Vector2i(600, 320)
+transient = true
+exclusive = true
+ok_button_text = "关闭"
+
+[node name="SaveSlotScroll" type="ScrollContainer" parent="SaveSlotDialog"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="SaveSlotList" type="VBoxContainer" parent="SaveSlotDialog/SaveSlotScroll"]
+unique_name_in_owner = true
+size_flags_horizontal = 3
+theme_override_constants/separation = 6
+
+[node name="ChoiceDialog" type="AcceptDialog" parent="."]
+unique_name_in_owner = true
+title = "事件决策"
+initial_position = 2
+size = Vector2i(520, 380)
+transient = true
+exclusive = true
+
+[node name="ChoiceVBox" type="VBoxContainer" parent="ChoiceDialog"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme_override_constants/separation = 12
+
+[node name="ChoiceTitle" type="Label" parent="ChoiceDialog/ChoiceVBox"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "事件决策"
+horizontal_alignment = 1
+
+[node name="ChoiceDesc" type="Label" parent="ChoiceDialog/ChoiceVBox"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "..."
+autowrap_mode = 2
+
+[node name="ChoiceOptions" type="VBoxContainer" parent="ChoiceDialog/ChoiceVBox"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 6
+
+[node name="AchievementDialog" type="AcceptDialog" parent="."]
+unique_name_in_owner = true
+title = "成就列表"
+initial_position = 2
+size = Vector2i(640, 600)
+transient = true
+exclusive = true
+ok_button_text = "关闭"
+
+[node name="AchievementScroll" type="ScrollContainer" parent="AchievementDialog"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="AchievementList" type="VBoxContainer" parent="AchievementDialog/AchievementScroll"]
+unique_name_in_owner = true
+size_flags_horizontal = 3
+theme_override_constants/separation = 4
+
+[node name="AwardDialog" type="AcceptDialog" parent="."]
+unique_name_in_owner = true
+title = "年度安全大奖"
+initial_position = 2
+size = Vector2i(520, 700)
+transient = true
+exclusive = true
+ok_button_text = "领奖"
+
+[node name="AwardScroll" type="ScrollContainer" parent="AwardDialog"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="AwardContent" type="VBoxContainer" parent="AwardDialog/AwardScroll"]
+unique_name_in_owner = true
+size_flags_horizontal = 3
+theme_override_constants/separation = 8
+
+[node name="GameOverDialog" type="AcceptDialog" parent="."]
+unique_name_in_owner = true
+title = "💀 游戏结束"
+initial_position = 2
+size = Vector2i(420, 380)
+transient = true
+exclusive = true
+ok_button_text = "重新开始"
+cancel_button_text = "开启 NG+ (二周目)"
+
+[node name="EmpDetailDialog" type="AcceptDialog" parent="."]
+unique_name_in_owner = true
+title = "员工详情"
+initial_position = 2
+size = Vector2i(480, 460)
+transient = true
+exclusive = true
+ok_button_text = "关闭"
+
+[node name="EmpDetailVBox" type="VBoxContainer" parent="EmpDetailDialog"]
+unique_name_in_owner = true
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme_override_constants/separation = 8
+
+[node name="CEOReviewDialog" type="AcceptDialog" parent="."]
+unique_name_in_owner = true
+title = "季度 CEO 评价"
+initial_position = 2
+size = Vector2i(520, 400)
+transient = true
+exclusive = true
+ok_button_text = "继续"
+
+[node name="CEOReviewVBox" type="VBoxContainer" parent="CEOReviewDialog"]
+unique_name_in_owner = true
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme_override_constants/separation = 12
+
+[node name="BudgetDialog" type="AcceptDialog" parent="."]
+unique_name_in_owner = true
+title = "预算谈判"
+initial_position = 2
+size = Vector2i(560, 400)
+transient = true
+exclusive = true
+
+[node name="BudgetVBox" type="VBoxContainer" parent="BudgetDialog"]
+unique_name_in_owner = true
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+theme_override_constants/separation = 8
+
+[node name="GameOverVBox" type="VBoxContainer" parent="GameOverDialog"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="GameOverLabel" type="Label" parent="GameOverDialog/GameOverVBox"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+text = "..."
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 2
+
+[node name="NGPlusPanel" type="PanelContainer" parent="GameOverDialog/GameOverVBox"]
+unique_name_in_owner = true
+layout_mode = 2
+visible = false
+
+[node name="NGPlusVBox" type="VBoxContainer" parent="GameOverDialog/GameOverVBox/NGPlusPanel"]
+layout_mode = 2
+
+[node name="NGPlusLabel" type="Label" parent="GameOverDialog/GameOverVBox/NGPlusPanel/NGPlusVBox"]
+layout_mode = 2
+text = "选择 2 名员工继承到二周目（保留 50% 技能）："
+
+[node name="NGPlusEmployeeList" type="VBoxContainer" parent="GameOverDialog/GameOverVBox/NGPlusPanel/NGPlusVBox"]
+unique_name_in_owner = true
+layout_mode = 2
+
+[connection signal="pressed" from="RootMargin/RootVBox/TopBar/TopHBox/AchievementButton" to="." method="_on_achievement_button_pressed"]
+[connection signal="pressed" from="RootMargin/RootVBox/TopBar/TopHBox/SaveButton" to="." method="_on_save_button_pressed"]
+[connection signal="pressed" from="RootMargin/RootVBox/TopBar/TopHBox/HelpButton" to="." method="_on_help_button_pressed"]
+[connection signal="pressed" from="RootMargin/RootVBox/MainHBox/LeftPanel/LeftVBox/EmpHeader/HireButton" to="." method="_on_hire_button_pressed"]
+[connection signal="confirmed" from="GameOverDialog" to="." method="_on_restart"]
+[connection signal="canceled" from="GameOverDialog" to="." method="_on_ng_plus_start"]

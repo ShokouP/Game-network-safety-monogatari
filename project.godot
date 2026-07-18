@@ -1,0 +1,44 @@
+; Engine configuration file.
+; It's best edited using the editor UI and not directly,
+; since the parameters that go here are not all obvious.
+;
+; Format:
+;   [section] ; section goes between []
+;   param=value ; assign values to parameters
+
+config_version=5
+
+[application]
+
+config/name="安全部物语 SecurityDeptStory"
+config/description="企业安全部门模拟经营游戏 - 开罗风格"
+run/main_scene="res://scenes/main.tscn"
+config/features=PackedStringArray("4.3", "Forward Plus")
+config/icon="res://icon.svg"
+
+[autoload]
+
+GameState="*res://scripts/core/game_state.gd"
+EmployeeRoster="*res://scripts/core/employee_roster.gd"
+IncidentQueue="*res://scripts/core/incident_queue.gd"
+AchievementMgr="*res://scripts/core/achievement_mgr.gd"
+AwardMgr="*res://scripts/core/award_mgr.gd"
+SaveMgr="*res://scripts/core/save_mgr.gd"
+NGPlusMgr="*res://scripts/core/ng_plus_mgr.gd"
+CEOMgr="*res://scripts/core/ceo_mgr.gd"
+
+[display]
+
+window/size/viewport_width=1280
+window/size/viewport_height=800
+window/size/window_width_override=1280
+window/size/window_height_override=800
+window/stretch/mode="canvas_items"
+
+[gui]
+
+theme/default_font_multichannel_signed_distance_field=true
+
+[rendering]
+
+environment/defaults/default_clear_color=Color(0.13, 0.16, 0.22, 1)
