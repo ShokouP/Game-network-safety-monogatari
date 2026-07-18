@@ -119,7 +119,7 @@ size_flags_vertical = 3
 theme_override_constants/separation = 10
 
 [node name="LeftPanel" type="PanelContainer" parent="RootMargin/RootVBox/MainHBox"]
-custom_minimum_size = Vector2(400, 0)
+custom_minimum_size = Vector2(460, 0)
 layout_mode = 2
 size_flags_vertical = 3
 
@@ -218,7 +218,7 @@ theme_override_constants/h_separation = 10
 theme_override_constants/v_separation = 10
 
 [node name="RightPanel" type="PanelContainer" parent="RootMargin/RootVBox/MainHBox"]
-custom_minimum_size = Vector2(300, 0)
+custom_minimum_size = Vector2(360, 0)
 layout_mode = 2
 size_flags_vertical = 3
 
