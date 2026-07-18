@@ -83,3 +83,19 @@ scripts/
 
 存档位置：`user://save_auto.save` / `user://save_slot_{1,2,3}.save`
 
+## AI 美术重新生成
+
+所有像素图由火山方舟 seedream 生成。要重新生成或扩充：
+
+1. 把 API key 放到 `~/.config/cybercairo/.env.volc`（项目外的私密位置，不会进 git）：
+   ```
+   VOLC_API_KEY=ark-xxxxx
+   ```
+2. 运行：
+   ```bash
+   python tools/gen_assets.py         # 员工头像/设施插画/地板/事件图标
+   python tools/gen_illustrations.py  # 颁奖背景/成就徽章/logo/菜单背景
+   python tools/downscale_assets.py   # 缩放到目标尺寸（保留像素感）
+   ```
+
+

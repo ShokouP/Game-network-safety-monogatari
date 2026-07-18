@@ -1,6 +1,8 @@
-# 火山方舟 API key（敏感，不要提交）
+# 火山方舟 API key（私密位置：~/.config/cybercairo/.env.volc，不在项目内）
+# 仍保留 .env* 防止误放到项目里
 .env.volc
 .env
+.env.*
 *.key
 
 # Godot 4 编辑器缓存

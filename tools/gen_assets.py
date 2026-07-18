@@ -7,12 +7,13 @@ def _load_key() -> str:
     key = os.environ.get("VOLC_API_KEY") or os.environ.get("ARK_API_KEY")
     if key:
         return key
-    env_file = Path(__file__).parent.parent / ".env.volc"
+    # 私密配置：~/.config/cybercairo/.env.volc（不在项目内，不会被 push）
+    env_file = Path.home() / ".config" / "cybercairo" / ".env.volc"
     if env_file.exists():
         for line in env_file.read_text().splitlines():
             if line.startswith("VOLC_API_KEY="):
                 return line.split("=", 1)[1].strip()
-    raise RuntimeError("未找到 API key：请设置 VOLC_API_KEY 环境变量或创建 .env.volc")
+    raise RuntimeError("未找到 API key：请设置 VOLC_API_KEY 或创建 ~/.config/cybercairo/.env.volc")
 
 API_KEY = _load_key()
 BASE_URL = "https://ark.cn-beijing.volces.com/api/v3"
