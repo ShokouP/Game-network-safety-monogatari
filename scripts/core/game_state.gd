@@ -47,6 +47,11 @@ var difficulty_modifier: float = 1.0  # NG+ 提升
 var bankrupt_months_count: int = 0   # 连续低资金月数
 var has_used_emergency_loan: bool = false  # 是否已用过紧急贷款
 
+# CEO（玩家角色）
+var ceo_name: String = "安全部长"
+var ceo_avatar_id: int = 0  # 0-5 对应 6 个专长头像
+var company_name: String = "安创科技"
+
 var rng := RandomNumberGenerator.new()
 
 func _ready() -> void:
@@ -290,6 +295,9 @@ func to_dict() -> Dictionary:
 		"difficulty_modifier": difficulty_modifier,
 		"bankrupt_months_count": bankrupt_months_count,
 		"has_used_emergency_loan": has_used_emergency_loan,
+		"ceo_name": ceo_name,
+		"ceo_avatar_id": ceo_avatar_id,
+		"company_name": company_name,
 		"departments": departments.values().map(func(d): return d.to_dict()),
 	}
 
@@ -306,6 +314,9 @@ func from_dict(d: Dictionary) -> void:
 	difficulty_modifier = d.get("difficulty_modifier", 1.0)
 	bankrupt_months_count = d.get("bankrupt_months_count", 0)
 	has_used_emergency_loan = d.get("has_used_emergency_loan", false)
+	ceo_name = d.get("ceo_name", "安全部长")
+	ceo_avatar_id = d.get("ceo_avatar_id", 0)
+	company_name = d.get("company_name", "安创科技")
 	departments.clear()
 	for dd in d.get("departments", []):
 		var dept := Department.from_dict(dd)

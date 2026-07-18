@@ -35,11 +35,11 @@ func setup(e: Employee, ov: Node2D) -> void:
 func _on_ready() -> void:
 	name_label.text = emp.name.substr(0, 3)
 	# 加载专长头像 + 外貌变体色调
-	var texture_path := "res://assets/sprites/employees/%s_64.png" % _specialty_key()
+	var texture_path := "res://assets/sprites/employees/%s_64_transparent.png" % _specialty_key()
 	if ResourceLoader.exists(texture_path):
 		sprite.texture = load(texture_path)
 	else:
-		sprite.texture = load("res://assets/sprites/employees/general_64.png")
+		sprite.texture = load("res://assets/sprites/employees/general_64_transparent.png")
 	sprite.modulate = emp.get_appearance_modulate()
 	# 初始位置
 	position = office_view.get_desk_position(emp.desk_id)

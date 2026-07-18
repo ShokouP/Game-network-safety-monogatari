@@ -34,7 +34,7 @@ func _specialty_key() -> String:
 	return "general"
 
 func _refresh() -> void:
-	var tex_path := "res://assets/sprites/employees/%s_64.png" % _specialty_key()
+	var tex_path := "res://assets/sprites/employees/%s_64_transparent.png" % _specialty_key()
 	if ResourceLoader.exists(tex_path):
 		avatar_rect.texture = load(tex_path)
 	avatar_rect.modulate = emp.get_appearance_modulate()

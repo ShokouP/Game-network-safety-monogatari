@@ -34,6 +34,7 @@ const INCIDENT_ROW_SCENE := preload("res://scenes/incident_row.tscn")
 @onready var budget_dialog: AcceptDialog = %BudgetDialog
 @onready var budget_vbox: VBoxContainer = %BudgetVBox
 @onready var tutorial_overlay: CanvasLayer = %TutorialOverlay
+@onready var ceo_label: Label = %CEOLabel
 @onready var save_slot_dialog: AcceptDialog = %SaveSlotDialog
 @onready var save_slot_list: VBoxContainer = %SaveSlotList
 @onready var choice_dialog: AcceptDialog = %ChoiceDialog
@@ -82,6 +83,9 @@ func _ready() -> void:
 	var logo_rect := get_node_or_null("RootMargin/RootVBox/TopBar/TopHBox/LogoRect")
 	if logo_rect and ResourceLoader.exists("res://assets/illustrations/game_logo.jpg"):
 		logo_rect.texture = load("res://assets/illustrations/game_logo.jpg")
+	# CEO 名 + 公司名
+	if ceo_label:
+		ceo_label.text = "👔 %s @ %s" % [GameState.ceo_name, GameState.company_name]
 
 	# 开局赠 2 名员工（如果无存档）
 	if EmployeeRoster.employees.is_empty():
@@ -263,7 +267,7 @@ func _on_emp_detail(emp: Employee) -> void:
 	avatar.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 	avatar.expand_mode = TextureRect.EXPAND_FIT_WIDTH_PROPORTIONAL
 	avatar.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-	var tex_path := "res://assets/sprites/employees/%s_64.png" % _specialty_key_of(emp)
+	var tex_path := "res://assets/sprites/employees/%s_64_transparent.png" % _specialty_key_of(emp)
 	if ResourceLoader.exists(tex_path):
 		avatar.texture = load(tex_path)
 	head.add_child(avatar)
@@ -407,7 +411,7 @@ func _refresh_candidates() -> void:
 		avatar.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 		avatar.expand_mode = TextureRect.EXPAND_FIT_WIDTH_PROPORTIONAL
 		avatar.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-		var tex_path := "res://assets/sprites/employees/%s_64.png" % _specialty_key_of(emp)
+		var tex_path := "res://assets/sprites/employees/%s_64_transparent.png" % _specialty_key_of(emp)
 		if ResourceLoader.exists(tex_path):
 			avatar.texture = load(tex_path)
 		avatar.modulate = emp.get_appearance_modulate()
