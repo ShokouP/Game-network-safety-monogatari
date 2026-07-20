@@ -89,7 +89,7 @@ func _update_iso_scale() -> void:
 	## 根据 y 坐标返回透视缩放（越靠下越大）
 	if office_view == null:
 		return
-	var scale_factor := office_view.get_employee_scale(position.y)
+	var scale_factor: float = office_view.get_employee_scale(position.y)
 	sprite.scale = Vector2(scale_factor, scale_factor)
 	# 名字标签也缩放，但保持可读性
 	name_label.scale = Vector2(lerpf(0.8, 1.2, scale_factor / 1.2), lerpf(0.8, 1.2, scale_factor / 1.2))
