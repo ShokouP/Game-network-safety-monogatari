@@ -90,7 +90,7 @@ func _update_iso_scale() -> void:
 	if office_view == null:
 		return
 	var scale_factor: float = office_view.get_employee_scale(position.y)
-	sprite.scale = Vector2(scale_factor, scale_factor)
+	sprite.scale = Vector2(scale_factor * 0.5, scale_factor * 0.5)  # 0.5 是基础缩放
 	# 名字标签也缩放，但保持可读性
 	name_label.scale = Vector2(lerpf(0.8, 1.2, scale_factor / 1.2), lerpf(0.8, 1.2, scale_factor / 1.2))
 

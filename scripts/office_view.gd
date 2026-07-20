@@ -5,8 +5,8 @@ signal employee_clicked(emp: Employee)
 signal facility_clicked(dept_id: String)
 
 const TILE_SIZE := 32
-const FLOOR_WIDTH := 20
-const FLOOR_HEIGHT := 12
+const FLOOR_WIDTH := 24
+const FLOOR_HEIGHT := 24
 
 const FLOORS := {
 	0: {"name": "F1 办公区", "unlocked_by": null, "depts": [], "floor_tex": "map_f1_office"},
@@ -107,6 +107,7 @@ func _build_floor(floor_id: int) -> void:
 		spr.texture = tex
 		spr.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 		spr.centered = false
+		# 缩放到楼层大小（24x24 格 = 768x768）
 		spr.scale = Vector2(
 			float(FLOOR_WIDTH * TILE_SIZE) / tex.get_width(),
 			float(FLOOR_HEIGHT * TILE_SIZE) / tex.get_height()
