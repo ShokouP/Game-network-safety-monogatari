@@ -57,20 +57,22 @@ func _fit_to_parent() -> void:
 # ---------- 2.5D 坐标转换 ----------
 
 func grid_to_iso(grid_x: int, grid_y: int) -> Vector2:
-	## 2D 网格坐标 → 2.5D 斜 45 度坐标
-	# 开罗风 2.5D：x 向右下，y 向左下，z 向上
-	# 简化为 2D：iso_x = (x - y) * tile_w/2, iso_y = (x + y) * tile_h/2
+	## 2D 网格坐标 → 2.5D 斜 45 度坐标（以地图中心为原点）
+	# 地图尺寸 640x384，中心在 (320, 192)
+	var center_x := float(FLOOR_WIDTH * TILE_SIZE) * 0.5
+	var center_y := float(FLOOR_HEIGHT * TILE_SIZE) * 0.5
 	var iso_x := float(grid_x - grid_y) * (TILE_SIZE * 0.5)
 	var iso_y := float(grid_x + grid_y) * (TILE_SIZE * 0.25)
-	return Vector2(iso_x + FLOOR_WIDTH * TILE_SIZE * 0.5, iso_y)
+	return Vector2(center_x + iso_x, center_y + iso_y)
 
 func get_desk_position(desk_id: int) -> Vector2:
 	if desk_id < 0:
 		return grid_to_iso(10, 6)
 	var row: int = desk_id / 4
 	var col: int = desk_id % 4
-	# 工位在地图上的大致位置（对应 2.5D 地图的 12 个工位）
-	var grid_x := 4 + col * 4
+	# 工位在 2.5D 地图上的实际位置（按地图上的 12 个工位标定）
+	# 地图上的工位分布：4 列 x 3 行，大致在地图中央偏下
+	var grid_x := 3 + col * 4
 	var grid_y := 3 + row * 3
 	return grid_to_iso(grid_x, grid_y)
 
