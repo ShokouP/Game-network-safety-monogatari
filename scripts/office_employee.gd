@@ -1,6 +1,6 @@
 extends CharacterBody2D
 ## 员工 agent：状态机驱动（Idle/Walk/Work/HandleIncident/Rest）
-## 用 AI 生成的像素头像作为 Sprite2D
+## 2.5D 适配：透视缩放 + 斜线行走
 
 enum State { IDLE, WALK_TO_DESK, WORK_AT_DESK, WALK_TO_FACILITY, AT_FACILITY, HANDLE_INCIDENT, REST }
 
@@ -21,7 +21,7 @@ var idle_duration: float = 2.0
 @onready var alert_icon: Label = %AlertIcon
 
 var dialog_timer: float = 0.0
-var dialog_cooldown: float = 8.0  # 每 8 秒可能冒一句话
+var dialog_cooldown: float = 8.0
 var rng := RandomNumberGenerator.new()
 
 func setup(e: Employee, ov: Node2D) -> void:
@@ -34,14 +34,12 @@ func setup(e: Employee, ov: Node2D) -> void:
 
 func _on_ready() -> void:
 	name_label.text = emp.name.substr(0, 3)
-	# 加载专长头像 + 外貌变体色调
 	var texture_path := "res://assets/sprites/employees/%s_64_transparent.png" % _specialty_key()
 	if ResourceLoader.exists(texture_path):
 		sprite.texture = load(texture_path)
 	else:
 		sprite.texture = load("res://assets/sprites/employees/general_64_transparent.png")
 	sprite.modulate = emp.get_appearance_modulate()
-	# 初始位置
 	position = office_view.get_desk_position(emp.desk_id)
 	_change_state(State.IDLE)
 	var refresh_timer := Timer.new()
@@ -73,21 +71,6 @@ func _physics_process(delta: float) -> void:
 			if state_timer >= 3.0:
 				_change_state(State.IDLE)
 
-func _pick_dialog_category() -> String:
-	## 根据当前状态选对话池
-	if emp.is_training:
-		return "training"
-	if emp.fatigue >= 70:
-		return "tired"
-	for inc in IncidentQueue.active_incidents:
-		if inc.assigned_employee_id == emp.id:
-			if inc.severity >= Incident.Severity.HIGH:
-				return "incident_high"
-			return "working"
-	if current_state == State.WORK_AT_DESK or current_state == State.AT_FACILITY:
-		return "working"
-	return "idle"
-
 func _move_toward_target(delta: float) -> void:
 	var dir := (target_position - position)
 	if dir.length() < ARRIVE_THRESHOLD:
@@ -97,8 +80,19 @@ func _move_toward_target(delta: float) -> void:
 	dir = dir.normalized()
 	velocity = dir * SPEED
 	move_and_slide()
+	# 2.5D 透视缩放：根据 y 坐标调整大小
+	_update_iso_scale()
 	# 行走时轻微上下摆动模拟步伐
 	sprite.position.y = -2.0 if int(Time.get_ticks_msec() / 200) % 2 == 0 else 0.0
+
+func _update_iso_scale() -> void:
+	## 根据 y 坐标返回透视缩放（越靠下越大）
+	if office_view == null:
+		return
+	var scale_factor := office_view.get_employee_scale(position.y)
+	sprite.scale = Vector2(scale_factor, scale_factor)
+	# 名字标签也缩放，但保持可读性
+	name_label.scale = Vector2(lerpf(0.8, 1.2, scale_factor / 1.2), lerpf(0.8, 1.2, scale_factor / 1.2))
 
 func _on_arrive() -> void:
 	match current_state:
@@ -158,10 +152,23 @@ func _get_dept_floor(dept_id: String) -> int:
 		"lab", "forensics", "pr_office": return 2
 		_: return 0
 
+func _pick_dialog_category() -> String:
+	if emp.is_training:
+		return "training"
+	if emp.fatigue >= 70:
+		return "tired"
+	for inc in IncidentQueue.active_incidents:
+		if inc.assigned_employee_id == emp.id:
+			if inc.severity >= Incident.Severity.HIGH:
+				return "incident_high"
+			return "working"
+	if current_state == State.WORK_AT_DESK or current_state == State.AT_FACILITY:
+		return "working"
+	return "idle"
+
 func _refresh_visual() -> void:
 	if not is_node_ready():
 		return
-	# 优先显示状态气泡（培训/疲劳）
 	if emp.is_training:
 		bubble_label.text = "📚 %d天" % emp.training_days_left
 		bubble.visible = true
@@ -169,14 +176,12 @@ func _refresh_visual() -> void:
 		bubble_label.text = "😫"
 		bubble.visible = true
 	elif dialog_timer >= dialog_cooldown:
-		# 冷却结束，冒一句对话
 		dialog_timer = 0.0
 		dialog_cooldown = randf_range(8.0, 15.0)
-		if rng.randf() < 0.7:  # 70% 概率冒话
+		if rng.randf() < 0.7:
 			var cat := _pick_dialog_category()
 			bubble_label.text = BubbleDialogData.pick(rng, cat)
 			bubble.visible = true
-			# 3 秒后隐藏
 			await get_tree().create_timer(3.0).timeout
 			if is_instance_valid(self) and not emp.is_training and emp.fatigue < 80:
 				bubble.visible = false
