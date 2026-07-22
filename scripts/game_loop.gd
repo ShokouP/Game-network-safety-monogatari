@@ -108,6 +108,13 @@ func _apply_training_result(emp: Employee) -> void:
 	var passive := emp.get_career_passive_bonus()
 	if passive.has("training_mult"):
 		boost = int(boost * passive["training_mult"])
+	# 收益递减
+	boost = int(boost * emp.get_course_boost_multiplier(emp.training_course_id))
+	# 超级有效（20% 概率 ×3）
+	var is_super := GameState.rng.randf() < 0.2
+	if is_super:
+		boost *= 3
+		GameState.alert_message.emit("🎉 超级有效！%s 的《%s》效果 ×3！" % [emp.name, course["name"]], Color(1.0, 0.85, 0.3))
 	match course["skill"]:
 		"skill_detect": emp.skill_detect = mini(100, emp.skill_detect + boost)
 		"skill_analyze": emp.skill_analyze = mini(100, emp.skill_analyze + boost)
@@ -115,6 +122,7 @@ func _apply_training_result(emp: Employee) -> void:
 		"skill_training": emp.skill_training = mini(100, emp.skill_training + boost)
 		"skill_research": emp.skill_research = mini(100, emp.skill_research + boost)
 	emp.stat_trainings_done += 1
+	emp.add_course_count(emp.training_course_id)
 	emp.add_exp(20)
 	EmployeeRoster.training_completed.emit(emp, emp.training_course_id)
 	GameState.alert_message.emit("%s 完成《%s》，%s +%d！" % [emp.name, course["name"], _skill_name(course["skill"]), boost], Color(0.5, 1.0, 0.7))

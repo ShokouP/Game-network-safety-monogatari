@@ -145,6 +145,29 @@ func _build_floor(floor_id: int) -> void:
 		_build_desks(floor_node)
 	else:
 		_build_facilities(floor_node, floor_id)
+	# 环境物（松树/石头/池子）
+	_build_scenery(floor_node, floor_id)
+
+func _build_scenery(parent: Node2D, floor_id: int) -> void:
+	## 环境物：加 scenery 氛围
+	var rng := RandomNumberGenerator.new()
+	rng.seed = hash(floor_id)
+	var scenery_items := [
+		{"name": "松树", "icon": "🌲", "pos": Vector2(2, 2)},
+		{"name": "石头", "icon": "🪨", "pos": Vector2(20, 2)},
+		{"name": "池子", "icon": "🪷", "pos": Vector2(11, 10)},
+	]
+	for item in scenery_items:
+		var lbl := Label.new()
+		lbl.text = item["icon"]
+		lbl.add_theme_font_size_override("font_size", 24)
+		lbl.position = item["pos"] * TILE_SIZE
+		parent.add_child(lbl)
+		# 季节影响：冬无松树
+		if GameState.current_season == GameState.Season.WINTER and item["name"] == "松树":
+			lbl.modulate = Color(0.5, 0.5, 0.5)  # 枯萎
+		elif GameState.current_season == GameState.Season.SPRING and item["name"] == "松树":
+			lbl.modulate = Color(0.5, 1.0, 0.5)  # 翠绿
 
 func _build_desks(parent: Node2D) -> void:
 	# 2.5D 地图上工位是斜的，用标记点表示（可选）
@@ -175,7 +198,7 @@ func _build_facilities(parent: Node2D, floor_id: int) -> void:
 		panel.add_theme_stylebox_override("panel", style)
 		panel.gui_input.connect(_on_facility_clicked.bind(dept_id))
 		parent.add_child(panel)
-		# 设施插画
+		# 设施插画（随等级变色）
 		var tex_path := "res://assets/sprites/facilities/%s_96.png" % dept_id
 		if dept.level > 0 and ResourceLoader.exists(tex_path):
 			var tex: Texture2D = load(tex_path)
@@ -185,6 +208,13 @@ func _build_facilities(parent: Node2D, floor_id: int) -> void:
 			spr.position = center
 			spr.scale = Vector2(0.8, 0.8)
 			parent.add_child(spr)
+			# 等级颜色：Lv.1 灰白 → Lv.5 金色
+			match dept.level:
+				1: spr.modulate = Color(0.8, 0.8, 0.8)
+				2: spr.modulate = Color(0.9, 0.9, 0.9)
+				3: spr.modulate = Color(1.0, 1.0, 1.0)
+				4: spr.modulate = Color(1.0, 0.95, 0.7)
+				5: spr.modulate = Color(1.0, 0.85, 0.3)
 			var tween := spr.create_tween().set_loops()
 			tween.tween_property(spr, "modulate:a", 0.7, 1.5).set_trans(Tween.TRANS_SINE)
 			tween.tween_property(spr, "modulate:a", 1.0, 1.5).set_trans(Tween.TRANS_SINE)

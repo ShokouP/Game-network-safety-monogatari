@@ -1,11 +1,12 @@
 extends CharacterBody2D
 ## 员工 agent：状态机驱动（Idle/Walk/Work/HandleIncident/Rest）
-## 2.5D 适配：透视缩放 + 斜线行走
+## 2.5D 适配：透视缩放 + 斜线行走 + 通勤/电梯
 
-enum State { IDLE, WALK_TO_DESK, WORK_AT_DESK, WALK_TO_FACILITY, AT_FACILITY, HANDLE_INCIDENT, REST }
+enum State { IDLE, WALK_TO_DESK, WORK_AT_DESK, WALK_TO_FACILITY, AT_FACILITY, HANDLE_INCIDENT, REST, COMMUTE_IN, COMMUTE_OUT, ELEVATOR_WAIT, ELEVATOR_MOVE }
 
 const SPEED := 80.0
 const ARRIVE_THRESHOLD := 4.0
+const ELEVATOR_WAIT_TIME := 2.0  # 电梯等待 2 秒
 
 var emp: Employee
 var office_view: Node2D
@@ -13,6 +14,8 @@ var current_state: State = State.IDLE
 var target_position: Vector2 = Vector2.ZERO
 var state_timer: float = 0.0
 var idle_duration: float = 2.0
+var elevator_target_floor: int = 0
+var elevator_wait_timer: float = 0.0
 
 @onready var sprite: Sprite2D = %Sprite
 @onready var name_label: Label = %NameLabel
@@ -65,11 +68,19 @@ func _physics_process(delta: float) -> void:
 		State.IDLE:
 			if state_timer >= idle_duration:
 				_pick_next_state()
-		State.WALK_TO_DESK, State.WALK_TO_FACILITY, State.HANDLE_INCIDENT, State.REST:
+		State.WALK_TO_DESK, State.WALK_TO_FACILITY, State.HANDLE_INCIDENT, State.REST, State.COMMUTE_IN, State.COMMUTE_OUT:
 			_move_toward_target(delta)
 		State.WORK_AT_DESK, State.AT_FACILITY:
 			if state_timer >= 3.0:
 				_change_state(State.IDLE)
+		State.ELEVATOR_WAIT:
+			elevator_wait_timer += delta
+			if elevator_wait_timer >= ELEVATOR_WAIT_TIME:
+				_enter_elevator()
+		State.ELEVATOR_MOVE:
+			# 电梯移动动画（1 秒）
+			if state_timer >= 1.0:
+				_arrive_elevator()
 
 func _move_toward_target(delta: float) -> void:
 	var dir := (target_position - position)
@@ -80,18 +91,14 @@ func _move_toward_target(delta: float) -> void:
 	dir = dir.normalized()
 	velocity = dir * SPEED
 	move_and_slide()
-	# 2.5D 透视缩放：根据 y 坐标调整大小
 	_update_iso_scale()
-	# 行走时轻微上下摆动模拟步伐
 	sprite.position.y = -2.0 if int(Time.get_ticks_msec() / 200) % 2 == 0 else 0.0
 
 func _update_iso_scale() -> void:
-	## 根据 y 坐标返回透视缩放（越靠下越大）
 	if office_view == null:
 		return
 	var scale_factor: float = office_view.get_employee_scale(position.y)
-	sprite.scale = Vector2(scale_factor * 0.5, scale_factor * 0.5)  # 0.5 是基础缩放
-	# 名字标签也缩放，但保持可读性
+	sprite.scale = Vector2(scale_factor * 0.5, scale_factor * 0.5)
 	name_label.scale = Vector2(lerpf(0.8, 1.2, scale_factor / 1.2), lerpf(0.8, 1.2, scale_factor / 1.2))
 
 func _on_arrive() -> void:
@@ -104,6 +111,12 @@ func _on_arrive() -> void:
 			_change_state(State.WORK_AT_DESK)
 		State.REST:
 			_change_state(State.AT_FACILITY)
+		State.COMMUTE_IN:
+			_change_state(State.IDLE)
+		State.COMMUTE_OUT:
+			# 下班，隐藏
+			visible = false
+			_change_state(State.IDLE)
 		_:
 			_change_state(State.IDLE)
 
@@ -139,12 +152,33 @@ func _walk_to_facility(dept_id: String, state: State) -> void:
 		return
 	var facility_floor := _get_dept_floor(dept_id)
 	if facility_floor != emp.floor_id:
-		emp.floor_id = facility_floor
-		position = office_view.get_facility_position(dept_id)
-		_change_state(State.AT_FACILITY)
+		# 跨楼层，用电梯
+		_use_elevator(facility_floor, state)
 		return
 	target_position = office_view.get_facility_position(dept_id)
 	_change_state(state)
+
+func _use_elevator(target_floor: int, next_state: State) -> void:
+	## 用电梯跨楼层
+	elevator_target_floor = target_floor
+	elevator_wait_timer = 0.0
+	_change_state(State.ELEVATOR_WAIT)
+	# 显示电梯气泡
+	bubble_label.text = "🛗 等电梯..."
+	bubble.visible = true
+
+func _enter_elevator() -> void:
+	## 进入电梯，开始移动
+	_change_state(State.ELEVATOR_MOVE)
+	bubble_label.text = "🛗 电梯中..."
+	emp.floor_id = elevator_target_floor
+
+func _arrive_elevator() -> void:
+	## 到达目标楼层
+	bubble.visible = false
+	# 传送到目标楼层位置
+	position = office_view.get_facility_position("soc" if elevator_target_floor == 1 else "lab")
+	_change_state(State.AT_FACILITY)
 
 func _get_dept_floor(dept_id: String) -> int:
 	match dept_id:

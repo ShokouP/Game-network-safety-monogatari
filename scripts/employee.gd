@@ -28,6 +28,8 @@ var hire_cost: int = 0
 var is_training: bool = false
 var training_course_id: String = ""
 var training_days_left: int = 0
+# 同课程学习次数（收益递减）
+var course_history: Dictionary = {}  # course_id -> count
 
 # 工位（俯视图用）
 var desk_id: int = -1
@@ -202,6 +204,17 @@ func advance_training() -> bool:
 		return true
 	return false
 
+func get_course_count(course_id: String) -> int:
+	return course_history.get(course_id, 0)
+
+func add_course_count(course_id: String) -> void:
+	course_history[course_id] = course_history.get(course_id, 0) + 1
+
+func get_course_boost_multiplier(course_id: String) -> float:
+	## 同课程收益递减：×0.8^n
+	var count := get_course_count(course_id)
+	return pow(0.8, count)
+
 func to_dict() -> Dictionary:
 	return {
 		"id": id, "name": name, "specialty": specialty, "personality": personality,
@@ -212,6 +225,7 @@ func to_dict() -> Dictionary:
 		"hire_cost": hire_cost,
 		"is_training": is_training, "training_course_id": training_course_id,
 		"training_days_left": training_days_left,
+		"course_history": course_history,
 		"desk_id": desk_id, "floor_id": floor_id,
 		"stat_blocked": stat_blocked, "stat_breached": stat_breached,
 		"stat_trainings_done": stat_trainings_done,
@@ -242,6 +256,7 @@ static func from_dict(d: Dictionary) -> Employee:
 	e.is_training = d.get("is_training", false)
 	e.training_course_id = d.get("training_course_id", "")
 	e.training_days_left = d.get("training_days_left", 0)
+	e.course_history = d.get("course_history", {})
 	e.desk_id = d.get("desk_id", -1)
 	e.floor_id = d.get("floor_id", 0)
 	e.stat_blocked = d.get("stat_blocked", 0)

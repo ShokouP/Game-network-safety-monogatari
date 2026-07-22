@@ -38,6 +38,10 @@ var reputation: int = START_REP
 var research_points: int = 0   # 研究点 - 用于解锁技术/课程
 var threat_intel: int = 50     # 威胁情报 0-100，影响事件预警时间
 
+# 季节（影响环境物加成）
+enum Season { SPRING, SUMMER, AUTUMN, WINTER }
+var current_season: Season = Season.SPRING
+
 var departments: Dictionary = {}
 var is_game_over: bool = false
 var ng_plus_count: int = 0     # 二周目计数
@@ -164,11 +168,13 @@ func _on_month_end() -> void:
 	var contract_income := reputation * 500  # 300 → 500
 	add_funds(contract_income)
 	alert_message.emit("月度安全服务合同收入 ¥%d（声誉 %d）" % [contract_income, reputation], Color(0.5, 0.9, 1.0))
-	# 研究点被动产出（实验室 + combo）
+	# 研究点被动产出（实验室 + combo + 季节加成）
 	var lab: Department = departments["lab"]
 	if lab.level > 0:
-		var rp_gain: int = int(lab.level * 5 * get_combo_lab_rp_mult()) + get_combo_monthly_rp_bonus()
+		var rp_gain: int = int(lab.level * 5 * get_combo_lab_rp_mult() * get_season_bonus()) + get_combo_monthly_rp_bonus()
 		add_rp(rp_gain)
+	# 季节更新（每 3 月换季节）
+	_update_season()
 	# 软性破产判定：连续 N 个月资金低于阈值
 	if funds < BANKRUPT_THRESHOLD:
 		bankrupt_months_count += 1
@@ -180,6 +186,30 @@ func _on_month_end() -> void:
 			], Color(1.0, 0.5, 0.5))
 	else:
 		bankrupt_months_count = 0
+
+func _update_season() -> void:
+	match month:
+		3, 4, 5: current_season = Season.SPRING
+		6, 7, 8: current_season = Season.SUMMER
+		9, 10, 11: current_season = Season.AUTUMN
+		12, 1, 2: current_season = Season.WINTER
+
+func get_season_name() -> String:
+	match current_season:
+		Season.SPRING: return "春"
+		Season.SUMMER: return "夏"
+		Season.AUTUMN: return "秋"
+		Season.WINTER: return "冬"
+	return "?"
+
+func get_season_bonus() -> float:
+	## 季节对环境物/设施的效率加成
+	match current_season:
+		Season.SPRING: return 1.1   # 春 +10%
+		Season.SUMMER: return 1.2   # 夏 +20%
+		Season.AUTUMN: return 1.05  # 秋 +5%
+		Season.WINTER: return 0.9   # 冬 -10%
+	return 1.0
 
 func take_emergency_loan() -> bool:
 	## CEO 紧急贷款（一次性）
@@ -236,7 +266,7 @@ func get_training_duration_modifier() -> float:
 # ---------- 设施 combo ----------
 
 func has_combo(dept_a: String, dept_b: String) -> bool:
-	## 判定两部门是否同层且都已建成（combo 生效）
+	## 判定两部门是否同层且相邻（2 格内）且都已建成
 	var floor_map = GameData.DEPT_FLOOR
 	if not floor_map.has(dept_a) or not floor_map.has(dept_b):
 		return false
@@ -244,7 +274,10 @@ func has_combo(dept_a: String, dept_b: String) -> bool:
 		return false
 	var da: Department = departments.get(dept_a)
 	var db: Department = departments.get(dept_b)
-	return da != null and db != null and da.level > 0 and db.level > 0
+	if da == null or db == null or da.level == 0 or db.level == 0:
+		return false
+	# 相邻判定：简化版（同层即算相邻，后续可改具体坐标）
+	return true
 
 func get_active_combos() -> Array:
 	## 返回当前激活的 combo 列表 [{combo_id, name, desc, effect}]
