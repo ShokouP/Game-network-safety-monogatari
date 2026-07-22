@@ -30,6 +30,9 @@ func spawn(inc: Incident) -> void:
 	inc.initial_days = inc.days_remaining
 	active_incidents.append(inc)
 	incident_spawned.emit(inc)
+	# 触发时暂停时间，弹独立窗口
+	GameState.set_speed(0)
+	GameState.alert_message.emit("🚨 新安全事件：%s" % inc.name, inc.get_severity_color())
 
 func assign(inc: Incident, emp_id: int) -> void:
 	# 专班任务不允许中途换人（除非已解决）

@@ -1,10 +1,12 @@
-[gd_scene load_steps=6 format=3 uid="uid://security_dept_main"]
+[gd_scene load_steps=8 format=3 uid="uid://security_dept_main"]
 
 [ext_resource type="Script" path="res://scripts/main.gd" id="1"]
 [ext_resource type="Script" path="res://scripts/game_loop.gd" id="2"]
 [ext_resource type="PackedScene" uid="uid://office_view" path="res://scenes/office_view.tscn" id="3"]
 [ext_resource type="PackedScene" uid="uid://news_ticker" path="res://scenes/news_ticker.tscn" id="4"]
 [ext_resource type="PackedScene" uid="uid://tutorial_overlay" path="res://scenes/tutorial_overlay.tscn" id="5"]
+[ext_resource type="PackedScene" uid="uid://assistant_panel" path="res://scenes/assistant_panel.tscn" id="6"]
+[ext_resource type="PackedScene" uid="uid://shop_dialog" path="res://scenes/shop_dialog.tscn" id="7"]
 
 [node name="Main" type="Control"]
 layout_mode = 3
@@ -105,6 +107,11 @@ size_flags_horizontal = 3
 custom_minimum_size = Vector2(100, 36)
 layout_mode = 2
 text = "🏆 成就"
+
+[node name="ShopButton" type="Button" parent="RootVBox/TopBar/TopMargin/TopHBox"]
+custom_minimum_size = Vector2(90, 36)
+layout_mode = 2
+text = "🛒 商店"
 
 [node name="SpeedButtons" type="HBoxContainer" parent="RootVBox/TopBar/TopMargin/TopHBox"]
 unique_name_in_owner = true
@@ -296,6 +303,23 @@ theme_override_constants/separation = 10
 
 [node name="RankingPanel" type="PanelContainer" parent="RootVBox/MainHBox/RightPanel/RightMargin/RightVBox"]
 layout_mode = 2
+
+[node name="ConnectionPanel" type="PanelContainer" parent="RootVBox/MainHBox/RightPanel/RightMargin/RightVBox"]
+layout_mode = 2
+
+[node name="ConnectionVBox" type="VBoxContainer" parent="RootVBox/MainHBox/RightPanel/RightMargin/RightVBox/ConnectionPanel"]
+layout_mode = 2
+
+[node name="ConnectionTitle" type="Label" parent="RootVBox/MainHBox/RightPanel/RightMargin/RightVBox/ConnectionPanel/ConnectionVBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = "🤝 人脉"
+horizontal_alignment = 1
+
+[node name="ConnectionList" type="VBoxContainer" parent="RootVBox/MainHBox/RightPanel/RightMargin/RightVBox/ConnectionPanel/ConnectionVBox"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 2
 
 [node name="RankingVBox" type="VBoxContainer" parent="RootVBox/MainHBox/RightPanel/RightMargin/RightVBox/RankingPanel"]
 layout_mode = 2
@@ -595,8 +619,27 @@ layout_mode = 2
 [node name="TutorialOverlay" parent="." instance=ExtResource("5")]
 unique_name_in_owner = true
 
+[node name="AssistantPanel" parent="." instance=ExtResource("6")]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -340.0
+offset_top = -400.0
+offset_right = -20.0
+offset_bottom = -20.0
+grow_horizontal = 0
+grow_vertical = 0
+
+[node name="ShopDialog" parent="." instance=ExtResource("7")]
+unique_name_in_owner = true
+
 ; ========== 信号连接 ==========
 [connection signal="pressed" from="RootVBox/TopBar/TopMargin/TopHBox/AchievementButton" to="." method="_on_achievement_button_pressed"]
+[connection signal="pressed" from="RootVBox/TopBar/TopMargin/TopHBox/ShopButton" to="." method="_on_shop_button_pressed"]
 [connection signal="pressed" from="RootVBox/TopBar/TopMargin/TopHBox/SaveButton" to="." method="_on_save_button_pressed"]
 [connection signal="pressed" from="RootVBox/TopBar/TopMargin/TopHBox/HelpButton" to="." method="_on_help_button_pressed"]
 [connection signal="pressed" from="RootVBox/MainHBox/LeftPanel/LeftMargin/LeftVBox/EmpHeader/HireButton" to="." method="_on_hire_button_pressed"]

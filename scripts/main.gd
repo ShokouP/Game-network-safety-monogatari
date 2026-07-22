@@ -29,6 +29,8 @@ const INCIDENT_ROW_SCENE := preload("res://scenes/incident_row.tscn")
 @onready var emp_detail_dialog: AcceptDialog = %EmpDetailDialog
 @onready var emp_detail_vbox: VBoxContainer = %EmpDetailVBox
 @onready var ranking_list: VBoxContainer = %RankingList
+@onready var connection_list: VBoxContainer = %ConnectionList
+@onready var shop_dialog: AcceptDialog = %ShopDialog
 @onready var ceo_review_dialog: AcceptDialog = %CEOReviewDialog
 @onready var ceo_review_vbox: VBoxContainer = %CEOReviewVBox
 @onready var budget_dialog: AcceptDialog = %BudgetDialog
@@ -79,6 +81,7 @@ func _ready() -> void:
 	_build_dept_grid()
 	_refresh_all()
 	_refresh_combo_display()
+	_refresh_connections()
 	# 加载 logo
 	var logo_rect := get_node_or_null("RootVBox/TopBar/TopMargin/TopHBox/LogoRect")
 	if logo_rect and ResourceLoader.exists("res://assets/illustrations/game_logo.jpg"):
@@ -196,6 +199,26 @@ func _refresh_rankings() -> void:
 		if e["is_player"]:
 			lbl.add_theme_color_override("font_color", Color(0.5, 1.0, 0.7))
 		ranking_list.add_child(lbl)
+
+func _refresh_connections() -> void:
+	for c in connection_list.get_children():
+		c.queue_free()
+	for conn in ConnectionMgr.connections:
+		var row := HBoxContainer.new()
+		var icon := Label.new()
+		match conn.type:
+			Connection.ConnectionType.HEADHUNTER: icon.text = "👔"
+			Connection.ConnectionType.EXPERT: icon.text = "🎓"
+			Connection.ConnectionType.VENDOR: icon.text = "🏢"
+			Connection.ConnectionType.COMMUNITY: icon.text = "👥"
+			Connection.ConnectionType.REGULATOR: icon.text = "🏛️"
+		row.add_child(icon)
+		var info := Label.new()
+		info.text = "%s (%s)" % [conn.name, conn.get_relation_level()]
+		info.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		info.add_theme_font_size_override("font_size", 11)
+		row.add_child(info)
+		connection_list.add_child(row)
 
 func _check_funds_achievements(v: int) -> void:
 	if v >= 100000: AchievementMgr.unlock("funds_100k")
@@ -522,6 +545,8 @@ func _skill_short(s: String) -> String:
 func _on_incident_spawned(inc: Incident) -> void:
 	_on_alert("🚨 %s - %s" % [inc.get_severity_name(), inc.name], inc.get_severity_color())
 	_refresh_incidents()
+	# 弹独立事件窗口（时间已暂停）
+	_show_incident_dialog(inc)
 
 func _on_incident_resolved(inc: Incident, success: bool) -> void:
 	if success:
@@ -550,6 +575,72 @@ func _refresh_incidents() -> void:
 func _on_incident_assign(inc: Incident, emp_id: int) -> void:
 	IncidentQueue.assign(inc, emp_id)
 	_refresh_incidents()
+
+func _show_incident_dialog(inc: Incident) -> void:
+	## 独立事件窗口：显示事件详情 + 分配员工
+	var dialog := AcceptDialog.new()
+	dialog.title = "🚨 安全事件"
+	dialog.size = Vector2i(480, 400)
+	dialog.transient = true
+	dialog.exclusive = true
+	var vbox := VBoxContainer.new()
+	vbox.theme_override_constants.separation = 12
+	dialog.add_child(vbox)
+	# 标题
+	var title := Label.new()
+	title.text = "%s %s" % [inc.get_severity_name(), inc.name]
+	title.add_theme_font_size_override("font_size", 20)
+	title.add_theme_color_override("font_color", inc.get_severity_color())
+	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	vbox.add_child(title)
+	# 描述
+	var desc := Label.new()
+	desc.text = inc.description
+	desc.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	vbox.add_child(desc)
+	# 属性
+	var info := Label.new()
+	info.text = "难度: %d  |  时限: %d 天  |  需要: %s" % [
+		inc.difficulty, inc.days_remaining, _skill_short(inc.required_skill)
+	]
+	info.add_theme_font_size_override("font_size", 12)
+	info.add_theme_color_override("font_color", Color(0.7, 0.7, 0.7))
+	vbox.add_child(info)
+	# 分配员工
+	var assign_label := Label.new()
+	assign_label.text = "选择处置员工："
+	vbox.add_child(assign_label)
+	var option := OptionButton.new()
+	option.add_item("暂不分配（稍后处理）", -1)
+	for emp in EmployeeRoster.employees:
+		var label := "%s (%s%d)" % [emp.name, _skill_short(inc.required_skill), emp.get(inc.required_skill)]
+		option.add_item(label, emp.id)
+	vbox.add_child(option)
+	# 按钮
+	var btn_row := HBoxContainer.new()
+	btn_row.alignment = BoxContainer.ALIGNMENT_CENTER
+	var ok_btn := Button.new()
+	ok_btn.text = "确认"
+	ok_btn.custom_minimum_size = Vector2(120, 36)
+	ok_btn.pressed.connect(func():
+		var emp_id := option.get_selected_id()
+		if emp_id >= 0:
+			IncidentQueue.assign(inc, emp_id)
+		dialog.queue_free()
+		GameState.set_speed(1)  # 恢复时间
+	)
+	btn_row.add_child(ok_btn)
+	var later_btn := Button.new()
+	later_btn.text = "稍后处理"
+	later_btn.custom_minimum_size = Vector2(120, 36)
+	later_btn.pressed.connect(func():
+		dialog.queue_free()
+		GameState.set_speed(1)  # 恢复时间
+	)
+	btn_row.add_child(later_btn)
+	vbox.add_child(btn_row)
+	add_child(dialog)
+	dialog.popup_centered()
 
 # ---------- 事件选择树 ----------
 
@@ -932,6 +1023,9 @@ func _on_help_button_pressed() -> void:
 		tutorial_overlay.start(self)
 	else:
 		_on_alert("💡 招募员工 → 派单处置事件 → 赚钱升级部门 → 抵御更强攻击", Color(0.8, 0.9, 1.0))
+
+func _on_shop_button_pressed() -> void:
+	shop_dialog.popup_centered()
 
 func _start_tutorial() -> void:
 	if tutorial_overlay:

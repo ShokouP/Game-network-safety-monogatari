@@ -26,6 +26,7 @@ AwardMgr="*res://scripts/core/award_mgr.gd"
 SaveMgr="*res://scripts/core/save_mgr.gd"
 NGPlusMgr="*res://scripts/core/ng_plus_mgr.gd"
 CEOMgr="*res://scripts/core/ceo_mgr.gd"
+ConnectionMgr="*res://scripts/core/connection_mgr.gd"
 
 [display]
 
