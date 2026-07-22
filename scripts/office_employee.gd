@@ -98,7 +98,7 @@ func _update_iso_scale() -> void:
 	if office_view == null:
 		return
 	var scale_factor: float = office_view.get_employee_scale(position.y)
-	sprite.scale = Vector2(scale_factor * 0.5, scale_factor * 0.5)
+	sprite.scale = Vector2(scale_factor * 0.4, scale_factor * 0.4)
 	name_label.scale = Vector2(lerpf(0.8, 1.2, scale_factor / 1.2), lerpf(0.8, 1.2, scale_factor / 1.2))
 
 func _on_arrive() -> void:

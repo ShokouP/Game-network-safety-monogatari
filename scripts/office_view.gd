@@ -126,11 +126,10 @@ func _build_floor(floor_id: int) -> void:
 		spr.texture = tex
 		spr.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 		spr.centered = false
-		# 按视口大小缩放（不按楼层尺寸）
-		var viewport_size := get_viewport_rect().size
+		# 按楼层尺寸缩放（和 _fit_to_parent 一致）
 		spr.scale = Vector2(
-			viewport_size.x / tex.get_width(),
-			viewport_size.y / tex.get_height()
+			float(FLOOR_WIDTH * TILE_SIZE) / tex.get_width(),
+			float(FLOOR_HEIGHT * TILE_SIZE) / tex.get_height()
 		)
 		floor_node.add_child(spr)
 	else:
