@@ -126,10 +126,11 @@ func _build_floor(floor_id: int) -> void:
 		spr.texture = tex
 		spr.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 		spr.centered = false
-		# 缩放到楼层大小（24x24 格 = 768x768）
+		# 按视口大小缩放（不按楼层尺寸）
+		var viewport_size := get_viewport_rect().size
 		spr.scale = Vector2(
-			float(FLOOR_WIDTH * TILE_SIZE) / tex.get_width(),
-			float(FLOOR_HEIGHT * TILE_SIZE) / tex.get_height()
+			viewport_size.x / tex.get_width(),
+			viewport_size.y / tex.get_height()
 		)
 		floor_node.add_child(spr)
 	else:
@@ -144,14 +145,6 @@ func _build_floor(floor_id: int) -> void:
 		_build_desks(floor_node)
 	else:
 		_build_facilities(floor_node, floor_id)
-	# 区域标记（可选显示）
-	for zone in FLOOR_ZONES.get(floor_id, []):
-		var zone_rect := ColorRect.new()
-		var rect: Rect2i = zone["rect"]
-		zone_rect.position = Vector2(rect.position.x * TILE_SIZE, rect.position.y * TILE_SIZE)
-		zone_rect.size = Vector2(rect.size.x * TILE_SIZE, rect.size.y * TILE_SIZE)
-		zone_rect.color = zone["color"]
-		floor_node.add_child(zone_rect)
 
 func _build_desks(parent: Node2D) -> void:
 	# 2.5D 地图上工位是斜的，用标记点表示（可选）
