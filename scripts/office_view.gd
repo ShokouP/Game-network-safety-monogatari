@@ -14,6 +14,25 @@ const FLOORS := {
 	2: {"name": "F3 研究区", "unlocked_by": "lab", "depts": ["lab", "forensics", "pr_office"], "floor_tex": "map_f3_research"},
 }
 
+# 办公室区域（每楼层内的功能分区）
+const FLOOR_ZONES := {
+	0: [  # F1 办公区
+		{"name": "工位区", "rect": Rect2i(4, 3, 16, 18), "color": Color(0.2, 0.3, 0.4, 0.3)},
+		{"name": "会议室", "rect": Rect2i(1, 1, 4, 4), "color": Color(0.3, 0.2, 0.4, 0.3)},
+		{"name": "休息区", "rect": Rect2i(19, 1, 4, 4), "color": Color(0.2, 0.4, 0.3, 0.3)},
+	],
+	1: [  # F2 运营区
+		{"name": "SOC 监控", "rect": Rect2i(2, 2, 8, 8), "color": Color(0.1, 0.3, 0.2, 0.3)},
+		{"name": "培训室", "rect": Rect2i(12, 2, 8, 8), "color": Color(0.3, 0.3, 0.1, 0.3)},
+		{"name": "休息区", "rect": Rect2i(2, 12, 8, 8), "color": Color(0.2, 0.4, 0.3, 0.3)},
+	],
+	2: [  # F3 研究区
+		{"name": "实验室", "rect": Rect2i(2, 2, 8, 8), "color": Color(0.3, 0.1, 0.3, 0.3)},
+		{"name": "取证室", "rect": Rect2i(12, 2, 8, 8), "color": Color(0.1, 0.3, 0.3, 0.3)},
+		{"name": "公关室", "rect": Rect2i(2, 12, 8, 8), "color": Color(0.3, 0.2, 0.1, 0.3)},
+	],
+}
+
 @onready var floor_container: Node2D = %FloorContainer
 @onready var employee_container: Node2D = %EmployeeContainer
 
@@ -125,6 +144,14 @@ func _build_floor(floor_id: int) -> void:
 		_build_desks(floor_node)
 	else:
 		_build_facilities(floor_node, floor_id)
+	# 区域标记（可选显示）
+	for zone in FLOOR_ZONES.get(floor_id, []):
+		var zone_rect := ColorRect.new()
+		var rect: Rect2i = zone["rect"]
+		zone_rect.position = Vector2(rect.position.x * TILE_SIZE, rect.position.y * TILE_SIZE)
+		zone_rect.size = Vector2(rect.size.x * TILE_SIZE, rect.size.y * TILE_SIZE)
+		zone_rect.color = zone["color"]
+		floor_node.add_child(zone_rect)
 
 func _build_desks(parent: Node2D) -> void:
 	# 2.5D 地图上工位是斜的，用标记点表示（可选）
