@@ -4,7 +4,8 @@ extends AcceptDialog
 @onready var shop_list: VBoxContainer = %ShopList
 
 func _ready() -> void:
-	_build_shop()
+	# 延迟到第一次 popup 时构建，确保 ShopData 已加载
+	about_to_popup.connect(_build_shop)
 
 func _build_shop() -> void:
 	for c in shop_list.get_children():
