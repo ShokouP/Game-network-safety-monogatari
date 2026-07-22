@@ -47,6 +47,12 @@ var is_game_over: bool = false
 var ng_plus_count: int = 0     # 二周目计数
 var difficulty_modifier: float = 1.0  # NG+ 提升
 
+# Fever 爆发机制
+var fever_active: bool = false
+var fever_days_left: int = 0
+var fever_multiplier: float = 2.0  # 声誉 ×2
+var fever_streak: int = 0  # 连续拦截计数
+
 # 破产保护状态
 var bankrupt_months_count: int = 0   # 连续低资金月数
 var has_used_emergency_loan: bool = false  # 是否已用过紧急贷款
@@ -107,10 +113,39 @@ func spend_funds(cost: int) -> bool:
 	return true
 
 func add_rep(amount: int) -> void:
+	# Fever 期间声誉 ×2
+	if fever_active:
+		amount = int(amount * fever_multiplier)
 	reputation = clampi(reputation + amount, MIN_REP, MAX_REP)
 	rep_changed.emit(reputation)
 	if reputation <= 0 and not is_game_over:
 		_trigger_game_over("声誉扫地！连续的安全事故让公司成为业界笑柄。")
+
+func trigger_fever() -> void:
+	## 连续拦截 10 次触发 Fever
+	if fever_active:
+		return
+	fever_active = true
+	fever_days_left = 7
+	fever_streak = 0
+	alert_message.emit("🔥 Fever！连续拦截 10 次，声誉 ×2，持续 7 天！", Color(1.0, 0.85, 0.3))
+
+func _on_day_end() -> void:
+	# Fever 倒计时
+	if fever_active:
+		fever_days_left -= 1
+		if fever_days_left <= 0:
+			fever_active = false
+			alert_message.emit("Fever 结束", Color(0.7, 0.7, 0.7))
+	# 员工疲劳恢复
+	for emp in EmployeeRoster.employees:
+		emp.recover_fatigue(2)
+	# 部门被动产出
+	var soc: Department = departments["soc"]
+	if soc.level > 0 and rng.randf() < 0.05 * soc.level:
+		var bonus := 500 * soc.level
+		add_funds(bonus)
+		alert_message.emit("SOC 自动拦截威胁，获得 ¥%d 保险返还" % bonus, Color(0.5, 1.0, 0.7))
 
 func add_rp(amount: int) -> void:
 	research_points = clampi(research_points + amount, 0, MAX_RP)
@@ -144,13 +179,6 @@ func advance_day() -> void:
 			year += 1
 	_on_day_end()
 	date_changed.emit(year, month, day)
-
-func _on_day_end() -> void:
-	var soc: Department = departments["soc"]
-	if soc.level > 0 and rng.randf() < 0.05 * soc.level:
-		var bonus := 500 * soc.level
-		add_funds(bonus)
-		alert_message.emit("SOC 自动拦截威胁，获得 ¥%d 保险返还" % bonus, Color(0.5, 1.0, 0.7))
 
 func _on_month_end() -> void:
 	# 月薪

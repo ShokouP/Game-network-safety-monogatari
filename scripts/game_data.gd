@@ -61,6 +61,17 @@ const INCIDENT_TYPES := {
 	"zero_day":     {"name": "0day 漏洞利用", "desc": "核心业务系统发现未公开漏洞被利用", "required_skill": "skill_research", "base_difficulty": 70, "severity": 3, "weight": 3},
 	"web_attack":   {"name": "Web 应用入侵", "desc": "官网检测到 SQL 注入尝试", "required_skill": "skill_response", "base_difficulty": 28, "severity": 1, "weight": 20},
 	"apt":          {"name": "APT 持续渗透", "desc": "发现长期潜伏的高级威胁组织", "required_skill": "skill_research", "base_difficulty": 80, "severity": 3, "weight": 2},
+	# 新增 10 种
+	"crypto_jack":  {"name": "挖矿木马", "desc": "服务器 CPU 占用异常，疑似被植入挖矿程序", "required_skill": "skill_analyze", "base_difficulty": 32, "severity": 1, "weight": 15},
+	"wifi_evil":    {"name": "恶意 WiFi", "desc": "楼下车库发现同名 WiFi 钓鱼热点", "required_skill": "skill_detect", "base_difficulty": 22, "severity": 1, "weight": 12},
+	"usb_drop":     {"name": "U 盘投毒", "desc": "前台捡到可疑 U 盘，疑似社工投放", "required_skill": "skill_detect", "base_difficulty": 18, "severity": 0, "weight": 10},
+	"cloud_leak":   {"name": "云存储泄露", "desc": "对象存储桶权限配置错误，数据公开可访问", "required_skill": "skill_analyze", "base_difficulty": 38, "severity": 2, "weight": 10},
+	"iot_attack":   {"name": "IoT 设备入侵", "desc": "智能摄像头被破解，内网视频流外泄", "required_skill": "skill_response", "base_difficulty": 42, "severity": 2, "weight": 8},
+	"ai_deepfake":  {"name": "AI 换脸诈骗", "desc": "财务收到『老板』视频通话要求转账", "required_skill": "skill_detect", "base_difficulty": 48, "severity": 2, "weight": 6},
+	"sql_inject":   {"name": "SQL 注入", "desc": "官网登录框存在 SQL 注入漏洞", "required_skill": "skill_response", "base_difficulty": 26, "severity": 1, "weight": 18},
+	"xss_attack":   {"name": "XSS 跨站脚本", "desc": "评论区被植入恶意脚本，用户 cookie 被窃", "required_skill": "skill_response", "base_difficulty": 24, "severity": 1, "weight": 16},
+	"mitm":         {"name": "中间人攻击", "desc": "内网 ARP 欺骗，流量被劫持", "required_skill": "skill_analyze", "base_difficulty": 40, "severity": 2, "weight": 8},
+	"backdoor":     {"name": "后门驻留", "desc": "服务器发现异常持久化后门", "required_skill": "skill_research", "base_difficulty": 55, "severity": 3, "weight": 5},
 }
 
 # 设施相性 combo（同层相邻自动触发）
@@ -148,6 +159,36 @@ const FLAVOR_EVENTS := [
 	{"id": "security_month", "name": "安全意识月",
 	 "desc": "全员参与度爆表，钓鱼点击率降至 0.1%",
 	 "effect": {"rep": 5, "rp": 3}, "weight": 7, "min_year": 1},
+]
+
+# 隐藏员工（满足条件后寄信应聘）
+const HIDDEN_EMPLOYEES := [
+	{
+		"id": "mister_x",
+		"name": "Mister X",
+		"specialty": Employee.Specialty.GENERAL,
+		"personality": Employee.Personality.LAID_BACK,
+		"skill_detect": 80, "skill_analyze": 80, "skill_response": 80, "skill_training": 80, "skill_research": 80,
+		"unlock_condition": "award_grand",  # 年度总评第一
+		"desc": "能量条极长，培养便宜",
+	},
+	{
+		"id": "kairobot",
+		"name": "Kairobot",
+		"specialty": Employee.Specialty.GENERAL,
+		"personality": Employee.Personality.STEADY,
+		"skill_detect": 100, "skill_analyze": 100, "skill_response": 100, "skill_training": 100, "skill_research": 100,
+		"unlock_condition": "ng_plus_5",  # 5 次 NG+
+		"desc": "终极招聘目标",
+	},
+]
+
+# 商人（每年 5 月来访，卖稀有道具）
+const MERCHANT_ITEMS := [
+	{"id": "career_change", "name": "转职手册", "desc": "重置员工转职路径", "price": 10000, "stock": 1},
+	{"id": "skill_reset", "name": "技能重置卷", "desc": "重置员工所有技能点", "price": 15000, "stock": 1},
+	{"id": "rare_avatar", "name": "稀有头像", "desc": "解锁员工新外观", "price": 5000, "stock": 3},
+	{"id": "golden_desk", "name": "黄金工位", "desc": "工位效率 +20%", "price": 20000, "stock": 1},
 ]
 
 const CANDIDATE_NAMES := [
@@ -276,7 +317,10 @@ static func make_incident(type_id: String, year: int, month: int, rng: RandomNum
 	inc.name = t["name"]
 	inc.description = t["desc"]
 	inc.required_skill = t["required_skill"]
+	# 难度随时间推移提升（Y4-6 最痛点：Y4 后难度 ×1.5）
 	var time_scale := 1.0 + (year - 1) * 0.15 + (month - 1) * 0.02
+	if year >= 4 and year <= 6:
+		time_scale *= 1.5  # Y4-6 最痛点
 	inc.difficulty = int(t["base_difficulty"] * time_scale * GameState.difficulty_modifier)
 	inc.severity = t["severity"] as Incident.Severity
 	match inc.severity:
@@ -339,3 +383,21 @@ static func generate_candidate(emp_id: int, rng: RandomNumberGenerator, player_r
 	var avg := e.get_overall_skill()
 	e.hire_cost = int(2000 + avg * 200 + rng.randi_range(0, 2000))
 	return e
+
+static func generate_hidden_employee(hidden_id: String, emp_id: int) -> Employee:
+	## 生成隐藏员工
+	for data in HIDDEN_EMPLOYEES:
+		if data["id"] == hidden_id:
+			var e := Employee.new()
+			e.id = emp_id
+			e.name = data["name"]
+			e.specialty = data["specialty"]
+			e.personality = data["personality"]
+			e.skill_detect = data["skill_detect"]
+			e.skill_analyze = data["skill_analyze"]
+			e.skill_response = data["skill_response"]
+			e.skill_training = data["skill_training"]
+			e.skill_research = data["skill_research"]
+			e.hire_cost = 0  # 隐藏员工免费
+			return e
+	return null

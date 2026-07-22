@@ -38,12 +38,15 @@ func _tick_one_day() -> void:
 	_maybe_spawn_incident()
 	# 5.5 彩蛋事件判定（每月 1-2 条）
 	_maybe_spawn_flavor_event()
+	# 5.6 商人来访（每年 5 月 1 日）
+	_maybe_merchant_visit()
 	# 6. 月初自动保存
 	if GameState.day == 1:
 		SaveMgr.auto_save()
 
 var last_flavor_month: int = 0
 var flavor_count_this_month: int = 0
+var merchant_stock: Dictionary = {}  # item_id -> stock_left
 
 func _maybe_spawn_flavor_event() -> void:
 	## 每月随机 1-2 条彩蛋事件（第 1 年减半）
@@ -162,3 +165,12 @@ func _maybe_spawn_incident() -> void:
 			inc.difficulty = int(inc.difficulty * 0.7)
 		IncidentQueue.spawn(inc)
 	next_incident_check_day = today_abs + GameState.rng.randi_range(1, 2)
+
+func _maybe_merchant_visit() -> void:
+	## 每年 5 月 1 日商人来访
+	if GameState.month == 5 and GameState.day == 1:
+		GameState.alert_message.emit("🛒 商人来访！出售稀有道具（限量）", Color(1.0, 0.85, 0.3))
+		# 重置库存
+		merchant_stock.clear()
+		for item in GameData.MERCHANT_ITEMS:
+			merchant_stock[item["id"]] = item["stock"]

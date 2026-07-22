@@ -23,6 +23,7 @@ var level: int = 1
 var exp: int = 0
 var fatigue: int = 0
 var hire_cost: int = 0
+var is_retired: bool = false  # 是否已退休
 
 # 培训状态
 var is_training: bool = false
@@ -153,7 +154,11 @@ func get_personality_efficiency_modifier() -> float:
 	return 1.0
 
 func get_salary() -> int:
-	return 800 + level * level * 150
+	# 薪资随等级平方增长（Y4-6 最痛点：Y4 后薪资 ×1.2）
+	var base := 800 + level * level * 150
+	if GameState.year >= 4 and GameState.year <= 6:
+		base = int(base * 1.2)
+	return base
 
 func get_exp_needed() -> int:
 	return EXP_PER_LEVEL * level
@@ -223,6 +228,7 @@ func to_dict() -> Dictionary:
 		"skill_research": skill_research,
 		"level": level, "exp": exp, "fatigue": fatigue,
 		"hire_cost": hire_cost,
+		"is_retired": is_retired,
 		"is_training": is_training, "training_course_id": training_course_id,
 		"training_days_left": training_days_left,
 		"course_history": course_history,
@@ -253,6 +259,7 @@ static func from_dict(d: Dictionary) -> Employee:
 	e.exp = d.get("exp", 0)
 	e.fatigue = d.get("fatigue", 0)
 	e.hire_cost = d.get("hire_cost", 0)
+	e.is_retired = d.get("is_retired", false)
 	e.is_training = d.get("is_training", false)
 	e.training_course_id = d.get("training_course_id", "")
 	e.training_days_left = d.get("training_days_left", 0)

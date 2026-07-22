@@ -76,6 +76,8 @@ func _ready() -> void:
 	AwardMgr.award_ceremony_started.connect(_on_award_ceremony)
 	CEOMgr.ceo_review_started.connect(_on_ceo_review)
 	CEOMgr.budget_negotiation_started.connect(_on_budget_offer)
+	# 金色字体：成就/奖项时弹出
+	GameState.alert_message.connect(_on_alert_with_golden)
 
 	_build_speed_buttons()
 	_build_dept_grid()
@@ -774,6 +776,12 @@ func _on_alert(text: String, color: Color) -> void:
 	tween.tween_property(lbl, "modulate:a", 0.0, 1.5)
 	tween.tween_callback(lbl.queue_free)
 
+func _on_alert_with_golden(text: String, color: Color) -> void:
+	## 金色字体：成就/奖项时金色大字弹出
+	if "🏆" in text or "🎉" in text or "获得" in text:
+		_show_golden_text(text)
+	_on_alert(text, color)
+
 # ---------- 成就 Toast ----------
 
 func _on_achievement_unlocked(ach: Dictionary) -> void:
@@ -811,6 +819,25 @@ func _on_achievement_unlocked(ach: Dictionary) -> void:
 	tween.tween_property(panel, "modulate:a", 0.0, 1.0)
 	tween.tween_callback(panel.queue_free)
 	_refresh_stats()
+
+func _show_golden_text(text: String) -> void:
+	## 金色大字弹出（开罗风）
+	var lbl := Label.new()
+	lbl.text = text
+	lbl.add_theme_font_size_override("font_size", 32)
+	lbl.add_theme_color_override("font_color", Color(1.0, 0.85, 0.3))
+	lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	lbl.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	lbl.anchors_preset = Control.PRESET_CENTER
+	# 粒子效果（简化：缩放+淡出）
+	lbl.scale = Vector2(0.5, 0.5)
+	add_child(lbl)
+	var tween := create_tween()
+	tween.tween_property(lbl, "scale", Vector2(1.2, 1.2), 0.3).set_trans(Tween.TRANS_BACK)
+	tween.tween_property(lbl, "scale", Vector2(1.0, 1.0), 0.2).set_trans(Tween.TRANS_SINE)
+	tween.tween_interval(1.5)
+	tween.tween_property(lbl, "modulate:a", 0.0, 0.5)
+	tween.tween_callback(lbl.queue_free)
 
 # ---------- 成就列表 ----------
 

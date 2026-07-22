@@ -203,12 +203,23 @@ func _pick_dialog_category() -> String:
 func _refresh_visual() -> void:
 	if not is_node_ready():
 		return
-	if emp.is_training:
-		bubble_label.text = "📚 %d天" % emp.training_days_left
-		bubble.visible = true
-	elif emp.fatigue >= 80:
+	# 员工表情（开罗风）
+	if emp.fatigue >= 80:
 		bubble_label.text = "😫"
 		bubble.visible = true
+	elif emp.fatigue >= 60:
+		bubble_label.text = "😓"
+		bubble.visible = true
+	elif emp.is_training:
+		bubble_label.text = "📚 %d天" % emp.training_days_left
+		bubble.visible = true
+	elif current_state == State.WORK_AT_DESK or current_state == State.AT_FACILITY:
+		# 工作时有概率冒汗/专注
+		if rng.randf() < 0.1:
+			bubble_label.text = "💦"
+			bubble.visible = true
+		else:
+			bubble.visible = false
 	elif dialog_timer >= dialog_cooldown:
 		dialog_timer = 0.0
 		dialog_cooldown = randf_range(8.0, 15.0)

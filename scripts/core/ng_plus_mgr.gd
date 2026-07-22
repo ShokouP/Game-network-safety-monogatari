@@ -9,6 +9,9 @@ const VETERAN_COUNT := 2    # 可继承的员工数
 const SKILL_KEEP_RATIO := 0.5
 const LEVEL_KEEP_RATIO := 0.5
 
+# 续作链：继承"隐形熟练度"（类型/题材等级，不继承员工/资金）
+var genre_mastery: Dictionary = {}  # genre_id -> level (0-10)
+
 func can_start_ng_plus() -> bool:
 	return GameState.year >= MIN_YEAR_FOR_NG
 
@@ -53,3 +56,24 @@ func _make_veteran(source: Employee) -> Employee:
 	v.hire_cost = 0
 	v.is_veteran = true
 	return v
+
+# ---------- 续作链：熟练度继承 ----------
+
+func add_genre_mastery(genre_id: String, amount: int) -> void:
+	## 增加类型熟练度（处置某类事件多了就熟练）
+	genre_mastery[genre_id] = mini(10, genre_mastery.get(genre_id, 0) + amount)
+
+func get_genre_mastery(genre_id: String) -> int:
+	return genre_mastery.get(genre_id, 0)
+
+func get_mastery_bonus(genre_id: String) -> float:
+	## 熟练度加成：每级 +5% 效率
+	return 1.0 + get_genre_mastery(genre_id) * 0.05
+
+func to_dict() -> Dictionary:
+	return {
+		"genre_mastery": genre_mastery,
+	}
+
+func from_dict(d: Dictionary) -> void:
+	genre_mastery = d.get("genre_mastery", {})

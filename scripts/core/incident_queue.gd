@@ -140,6 +140,12 @@ func _resolve(inc: Incident, success: bool) -> void:
 		total_blocked += 1
 		year_blocked += 1
 		year_response_time_sum += days_used
+		# 续作链：增加类型熟练度
+		NGPlusMgr.add_genre_mastery(inc.type_id, 1)
+		# Fever：连续拦截 10 次触发
+		GameState.fever_streak += 1
+		if GameState.fever_streak >= 10:
+			GameState.trigger_fever()
 		if emp:
 			emp.stat_blocked += 1
 			var exp_gain := int(inc.exp_reward * GameState.get_combo_incident_exp_mult())
@@ -147,6 +153,8 @@ func _resolve(inc: Incident, success: bool) -> void:
 			var passive := emp.get_career_passive_bonus()
 			if passive.has("exp_mult"):
 				exp_gain = int(exp_gain * passive["exp_mult"])
+			# 续作链：类型熟练度加成
+			exp_gain = int(exp_gain * NGPlusMgr.get_mastery_bonus(inc.type_id))
 			emp.add_exp(exp_gain)
 			# 紫队被动：额外 RP
 			if passive.has("rp_per_incident"):
@@ -158,9 +166,11 @@ func _resolve(inc: Incident, success: bool) -> void:
 		inc.status = Incident.Status.RESOLVED_FAIL
 		total_breached += 1
 		year_breached += 1
+		# 失守重置 Fever 连击
+		GameState.fever_streak = 0
 		if emp:
 			emp.stat_breached += 1
-		var pr_reduction := GameState.get_pr_penalty_reduction()
+		var pr_reduction: float = GameState.get_pr_penalty_reduction()
 		GameState.add_rep(-int(inc.rep_penalty * pr_reduction))
 		GameState.add_funds(-inc.fund_penalty)
 	incident_resolved.emit(inc, success)
@@ -172,6 +182,8 @@ func _compute_progress_gain(emp: Employee, inc: Incident) -> float:
 	difficulty = int(difficulty * GameState.get_forensics_difficulty_reduction())
 	difficulty = int(difficulty * GameState.get_combo_difficulty_mult())
 	difficulty = int(difficulty * GameState.difficulty_modifier)
+	# 研究树：AI 威胁检测
+	difficulty = int(difficulty * ResearchMgr.get_difficulty_mult())
 	# 红队被动：难度感知降低
 	var passive := emp.get_career_passive_bonus()
 	if passive.has("difficulty_perception"):
